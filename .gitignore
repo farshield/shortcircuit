@@ -60,3 +60,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Custom
+venv/
+.idea/
+resources/database/universeDataDx.db

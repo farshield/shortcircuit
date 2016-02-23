@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>database/system_description.csv</file>
+    <file>database/system_jumps.csv</file>
+    <file>database/statics.csv</file>
+</qresource>
+</RCC>
