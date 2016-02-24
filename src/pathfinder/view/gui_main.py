@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Wed Feb 24 15:43:31 2016
+# Created: Wed Feb 24 18:49:19 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         self.pushButton_player_location.setText(QtGui.QApplication.translate("MainWindow", "Player location", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_find_path.setText(QtGui.QApplication.translate("MainWindow", "Find path", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Status:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_status.setText(QtGui.QApplication.translate("MainWindow", "Ready", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_status.setText(QtGui.QApplication.translate("MainWindow", "Path status", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox__options.setTitle(QtGui.QApplication.translate("MainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_eve_login.setText(QtGui.QApplication.translate("MainWindow", "Log in with EvE", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_trip_get.setText(QtGui.QApplication.translate("MainWindow", "Get Tripwire Chain", None, QtGui.QApplication.UnicodeUTF8))

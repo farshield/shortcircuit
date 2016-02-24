@@ -48,15 +48,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.scene_banner = QtGui.QGraphicsScene()
         self.graphicsView_banner.setScene(self.scene_banner)
         self.scene_banner.addPixmap(QtGui.QPixmap(":images/wds_logo.png"))
-        self.label_avoid_status.setText("")
+        self._path_message("", error=False)
+        self._avoid_message("", error=False)
+        self.lineEdit_source.setFocus()
 
         # Auto-completion
         system_list = self.nav.eve_db.system_name_list()
-        completer = QtGui.QCompleter(system_list, self)
-        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self.lineEdit_source.setCompleter(completer)
-        self.lineEdit_destination.setCompleter(completer)
-        self.lineEdit_avoid_name.setCompleter(completer)
+        for line_edit_field in [
+            self.lineEdit_source,
+            self.lineEdit_destination,
+            self.lineEdit_avoid_name,
+        ]:
+            completer = QtGui.QCompleter(system_list, self)
+            completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+            line_edit_field.setCompleter(completer)
 
         # Signals
         self.pushButton_find_path.clicked.connect(self.btn_find_path_clicked)
@@ -65,7 +70,23 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.pushButton_avoid_add.clicked.connect(self.btn_avoid_add_clicked)
         self.pushButton_avoid_delete.clicked.connect(self.btn_avoid_delete_clicked)
         self.pushButton_avoid_clear.clicked.connect(self.btn_avoid_clear_clicked)
+
+        self.lineEdit_source.returnPressed.connect(self.line_edit_source_return)
+        self.lineEdit_destination.returnPressed.connect(self.line_edit_destination_return)
         self.lineEdit_avoid_name.returnPressed.connect(self.line_edit_avoid_name_return)
+
+    def _label_message(self, label, message, error):
+        if error:
+            label.setStyleSheet("QLabel {color: red;}")
+        else:
+            label.setStyleSheet("QLabel {color: green;}")
+        label.setText(message)
+
+    def _avoid_message(self, message, error):
+        self._label_message(self.label_avoid_status, message, error)
+
+    def _path_message(self, message, error):
+        self._label_message(self.label_status, message, error)
 
     def avoidance_list(self):
         items = []
@@ -81,18 +102,42 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if sys_name:
             if sys_name not in self.avoidance_list():
                 QtGui.QListWidgetItem(sys_name, self.listWidget_avoid)
-                self.label_avoid_status.setStyleSheet("QLabel {color: green;}")
-                self.label_avoid_status.setText("Added")
+                self._avoid_message("Added", error=False)
             else:
-                self.label_avoid_status.setStyleSheet("QLabel {color: red;}")
-                self.label_avoid_status.setText("Already in list!")
+                self._avoid_message("Already in list!", error=True)
         else:
-            self.label_avoid_status.setStyleSheet("QLabel {color: red;}")
-            self.label_avoid_status.setText("Invalid system name :(")
+            self._avoid_message("Invalid system name :(", error=True)
+
+    def find_path(self):
+        source_sys_name = self.nav.eve_db.normalize_name(
+            self.lineEdit_source.text()
+        )
+        dest_sys_name = self.nav.eve_db.normalize_name(
+            self.lineEdit_destination.text()
+        )
+
+        if source_sys_name and dest_sys_name:
+            route = self.nav.route(source_sys_name, dest_sys_name)
+            if route:
+                route_length = len(route)
+                if route_length == 1:
+                    self._path_message("Setting the same source and destination :P", error=False)
+                else:
+                    self._path_message("Total number of jumps: {}".format(route_length - 1), error=False)
+            else:
+                self._path_message("No path found between the solar systems.", error=True)
+        else:
+            error_msg = []
+            if not source_sys_name:
+                error_msg.append("source")
+            if not dest_sys_name:
+                error_msg.append("destination")
+            error_msg = "Invalid system name in {}.".format(" and ".join(error_msg))
+            self._path_message(error_msg, error=True)
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):
-        pass
+        self.find_path()
 
     @QtCore.Slot()
     def btn_trip_config_clicked(self):
@@ -119,6 +164,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def line_edit_avoid_name_return(self):
         self.avoid_system()
 
+    @QtCore.Slot()
+    def line_edit_source_return(self):
+        self.lineEdit_destination.setFocus()
+
+    @QtCore.Slot()
+    def line_edit_destination_return(self):
+        self.find_path()
 
 def run():
     appl = QtGui.QApplication(sys.argv)

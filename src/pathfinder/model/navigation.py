@@ -23,4 +23,5 @@ class Navigation:
     def route(self, source, destination):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
-        return self.solar_map.shortest_path(source_id, dest_id)
+        path = self.solar_map.shortest_path(source_id, dest_id)
+        return [self.eve_db.system_desc[x] for x in path]
