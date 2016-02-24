@@ -20,6 +20,15 @@ class EveDb:
 
         return solar_map
 
+    def system_name_list(self):
+        return [x[0] for x in self.system_desc.values()]
+
+    def normalize_name(self, name):
+        for item in self.system_desc.values():
+            if name.upper() == item[0].upper():
+                return item[0]
+        return None
+
     def id2name(self, idx):
         try:
             sys_name = self.system_desc[idx][0]
