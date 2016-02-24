@@ -150,7 +150,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableWidget" name="tableWidget_path"/>
+          <widget class="QTableWidget" name="tableWidget_path">
+           <property name="rowCount">
+            <number>0</number>
+           </property>
+           <property name="columnCount">
+            <number>0</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -234,18 +241,22 @@
              </property>
              <property name="minimumSize">
               <size>
-               <width>48</width>
+               <width>0</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>48</width>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
              <property name="text">
               <string>Config</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources.qrc">
+               <normaloff>:/images/config_icon.png</normaloff>:/images/config_icon.png</iconset>
              </property>
             </widget>
            </item>
@@ -431,7 +442,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget_avoid"/>
+             <widget class="QListWidget" name="listWidget_avoid">
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -459,6 +474,10 @@
                <widget class="QPushButton" name="pushButton_avoid_clear">
                 <property name="text">
                  <string>Clear all</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resources.qrc">
+                  <normaloff>:/images/delete_icon.png</normaloff>:/images/delete_icon.png</iconset>
                 </property>
                </widget>
               </item>

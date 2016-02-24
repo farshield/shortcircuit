@@ -7,5 +7,7 @@
     <file>images/eve_logo.png</file>
     <file>images/tripwire_logo.png</file>
     <file>images/crest_logo.png</file>
+    <file>images/config_icon.png</file>
+    <file>images/delete_icon.png</file>
 </qresource>
 </RCC>

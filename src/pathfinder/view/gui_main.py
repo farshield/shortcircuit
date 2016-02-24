@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Wed Feb 24 13:27:02 2016
+# Created: Wed Feb 24 15:43:31 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,8 @@ class Ui_MainWindow(object):
         self.line.setObjectName("line")
         self.verticalLayout_2.addWidget(self.line)
         self.tableWidget_path = QtGui.QTableWidget(self.groupBox)
+        self.tableWidget_path.setRowCount(0)
+        self.tableWidget_path.setColumnCount(0)
         self.tableWidget_path.setObjectName("tableWidget_path")
         self.tableWidget_path.setColumnCount(0)
         self.tableWidget_path.setRowCount(0)
@@ -124,8 +126,11 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_trip_config.sizePolicy().hasHeightForWidth())
         self.pushButton_trip_config.setSizePolicy(sizePolicy)
-        self.pushButton_trip_config.setMinimumSize(QtCore.QSize(48, 0))
-        self.pushButton_trip_config.setMaximumSize(QtCore.QSize(48, 16777215))
+        self.pushButton_trip_config.setMinimumSize(QtCore.QSize(0, 0))
+        self.pushButton_trip_config.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/images/config_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_trip_config.setIcon(icon3)
         self.pushButton_trip_config.setObjectName("pushButton_trip_config")
         self.horizontalLayout_4.addWidget(self.pushButton_trip_config)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
@@ -222,6 +227,7 @@ class Ui_MainWindow(object):
         self.line_2.setObjectName("line_2")
         self.verticalLayout_4.addWidget(self.line_2)
         self.listWidget_avoid = QtGui.QListWidget(self.groupBox_avoidance)
+        self.listWidget_avoid.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.listWidget_avoid.setObjectName("listWidget_avoid")
         self.verticalLayout_4.addWidget(self.listWidget_avoid)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -232,6 +238,9 @@ class Ui_MainWindow(object):
         self.pushButton_avoid_delete.setObjectName("pushButton_avoid_delete")
         self.horizontalLayout_3.addWidget(self.pushButton_avoid_delete)
         self.pushButton_avoid_clear = QtGui.QPushButton(self.groupBox_avoidance)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/images/delete_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_avoid_clear.setIcon(icon4)
         self.pushButton_avoid_clear.setObjectName("pushButton_avoid_clear")
         self.horizontalLayout_3.addWidget(self.pushButton_avoid_clear)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
