@@ -67,7 +67,13 @@ def main():
                         else:
                             system_class = "NS"
 
-                f_out.write("{};{};{};{}\n".format(system_id, system_name, system_class, security))
+                if security < 0:
+                    security_format = "{:.2f}".format(security)
+                elif 0 <= security <= 0.1:
+                    security_format = "0.1"
+                else:
+                    security_format = "{:.1f}".format(security)
+                f_out.write("{};{};{};{}\n".format(system_id, system_name, system_class, security_format))
 
 
 if __name__ == "__main__":

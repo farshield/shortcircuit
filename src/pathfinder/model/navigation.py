@@ -20,8 +20,12 @@ class Navigation:
         trip = Tripwire(username, password, url)
         return trip.augment_map(self.solar_map)
 
-    def route(self, source, destination):
+    def route(self, source, destination, avoidance_list):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
-        path = self.solar_map.shortest_path(source_id, dest_id)
+        path = self.solar_map.shortest_path(
+            source_id,
+            dest_id,
+            [self.eve_db.name2id(x) for x in avoidance_list],
+        )
         return [self.eve_db.system_desc[x] for x in path]

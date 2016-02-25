@@ -66,6 +66,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.lineEdit_source,
             self.lineEdit_destination,
             self.lineEdit_avoid_name,
+            self.lineEdit_set_dest,
         ]:
             completer = QtGui.QCompleter(system_list, self)
             completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
@@ -90,11 +91,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # noinspection PyUnresolvedReferences
         self.pushButton_avoid_clear.clicked.connect(self.btn_avoid_clear_clicked)
         # noinspection PyUnresolvedReferences
+        self.pushButton_set_dest.clicked.connect(self.btn_set_dest_clicked)
+        # noinspection PyUnresolvedReferences
         self.lineEdit_source.returnPressed.connect(self.line_edit_source_return)
         # noinspection PyUnresolvedReferences
         self.lineEdit_destination.returnPressed.connect(self.line_edit_destination_return)
         # noinspection PyUnresolvedReferences
         self.lineEdit_avoid_name.returnPressed.connect(self.line_edit_avoid_name_return)
+        # noinspection PyUnresolvedReferences
+        self.tableWidget_path.itemSelectionChanged.connect(self.table_item_selection_changed)
 
     def _avoid_message(self, message, error):
         label_message(self.label_avoid_status, message, error)
@@ -160,7 +165,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
         if source_sys_name and dest_sys_name:
-            route = self.nav.route(source_sys_name, dest_sys_name)
+            if self.avoidance_enabled():
+                route = self.nav.route(source_sys_name, dest_sys_name, self.avoidance_list())
+            else:
+                route = self.nav.route(source_sys_name, dest_sys_name, [])
+
             if route:
                 route_length = len(route)
                 if route_length == 1:
@@ -208,6 +217,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.listWidget_avoid.clear()
 
     @QtCore.Slot()
+    def btn_set_dest_clicked(self):
+        pass
+
+    @QtCore.Slot()
     def line_edit_avoid_name_return(self):
         self.avoid_system()
 
@@ -218,6 +231,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.Slot()
     def line_edit_destination_return(self):
         self.find_path()
+
+    @QtCore.Slot()
+    def table_item_selection_changed(self):
+        selection = self.tableWidget_path.selectedItems()
+        self.lineEdit_set_dest.setText(selection[0].text())
 
 
 def run():

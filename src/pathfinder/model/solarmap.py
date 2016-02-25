@@ -71,7 +71,7 @@ class SolarMap:
     def __iter__(self):
         return iter(self.systems_list.values())
 
-    def shortest_path(self, source, destination):
+    def shortest_path(self, source, destination, avoidance_list):
         path = []
 
         if source in self.systems_list and destination in self.systems_list:
@@ -79,7 +79,7 @@ class SolarMap:
                 path = [source]
             else:
                 queue = collections.deque()
-                visited = set()
+                visited = set([self.get_system(x) for x in avoidance_list])
                 parent = {}
 
                 # starting point
