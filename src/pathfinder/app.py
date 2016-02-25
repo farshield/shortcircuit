@@ -21,6 +21,14 @@ def dict_from_csvqfile(file_path):
     return reader
 
 
+def label_message(label, message, error):
+    if error:
+        label.setStyleSheet("QLabel {color: red;}")
+    else:
+        label.setStyleSheet("QLabel {color: green;}")
+    label.setText(message)
+
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
     Main Window GUI
@@ -63,30 +71,39 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
             line_edit_field.setCompleter(completer)
 
-        # Signals
-        self.pushButton_find_path.clicked.connect(self.btn_find_path_clicked)
-        self.pushButton_trip_config.clicked.connect(self.btn_trip_config_clicked)
-        self.pushButton_trip_get.clicked.connect(self.btn_trip_get_clicked)
-        self.pushButton_avoid_add.clicked.connect(self.btn_avoid_add_clicked)
-        self.pushButton_avoid_delete.clicked.connect(self.btn_avoid_delete_clicked)
-        self.pushButton_avoid_clear.clicked.connect(self.btn_avoid_clear_clicked)
+        # Table configuration
+        self.tableWidget_path.setColumnCount(3)
+        self.tableWidget_path.setHorizontalHeaderLabels(["System name", "Class", "Security"])
+        self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
 
+        # Signals
+        # noinspection PyUnresolvedReferences
+        self.pushButton_find_path.clicked.connect(self.btn_find_path_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_trip_config.clicked.connect(self.btn_trip_config_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_trip_get.clicked.connect(self.btn_trip_get_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_avoid_add.clicked.connect(self.btn_avoid_add_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_avoid_delete.clicked.connect(self.btn_avoid_delete_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_avoid_clear.clicked.connect(self.btn_avoid_clear_clicked)
+        # noinspection PyUnresolvedReferences
         self.lineEdit_source.returnPressed.connect(self.line_edit_source_return)
+        # noinspection PyUnresolvedReferences
         self.lineEdit_destination.returnPressed.connect(self.line_edit_destination_return)
+        # noinspection PyUnresolvedReferences
         self.lineEdit_avoid_name.returnPressed.connect(self.line_edit_avoid_name_return)
 
-    def _label_message(self, label, message, error):
-        if error:
-            label.setStyleSheet("QLabel {color: red;}")
-        else:
-            label.setStyleSheet("QLabel {color: green;}")
-        label.setText(message)
-
     def _avoid_message(self, message, error):
-        self._label_message(self.label_avoid_status, message, error)
+        label_message(self.label_avoid_status, message, error)
 
     def _path_message(self, message, error):
-        self._label_message(self.label_status, message, error)
+        label_message(self.label_status, message, error)
+
+    def avoidance_enabled(self):
+        return self.checkBox_avoid_enabled.isChecked()
 
     def avoidance_list(self):
         items = []
@@ -108,6 +125,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self._avoid_message("Invalid system name :(", error=True)
 
+    def add_data_to_table(self, route):
+        self.tableWidget_path.setRowCount(len(route))
+        for i, row in enumerate(route):
+            for j, col in enumerate(row):
+                item = QtGui.QTableWidgetItem("{}".format(col))
+                self.tableWidget_path.setItem(i, j, item)
+
+                if j in [1, 2]:
+                    self.tableWidget_path.item(i, j).setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+                if row[1] == "HS":
+                    color = QtGui.QColor(124, 225, 181)
+                elif row[1] == "LS":
+                    color = QtGui.QColor(199, 218, 126)
+                elif row[1] == "NS":
+                    color = QtGui.QColor(243, 157, 157)
+                else:
+                    color = QtGui.QColor(155, 185, 236)
+
+                self.tableWidget_path.item(i, j).setBackground(color)
+
     def find_path(self):
         source_sys_name = self.nav.eve_db.normalize_name(
             self.lineEdit_source.text()
@@ -115,6 +153,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         dest_sys_name = self.nav.eve_db.normalize_name(
             self.lineEdit_destination.text()
         )
+
+        if self.avoidance_enabled():
+            if dest_sys_name in self.avoidance_list():
+                self._path_message("Destination is in the avoidance list, dummy ;)", error=True)
+                return
 
         if source_sys_name and dest_sys_name:
             route = self.nav.route(source_sys_name, dest_sys_name)
@@ -124,9 +167,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self._path_message("Setting the same source and destination :P", error=False)
                 else:
                     self._path_message("Total number of jumps: {}".format(route_length - 1), error=False)
+
+                self.add_data_to_table(route)
             else:
+                self.tableWidget_path.setRowCount(0)
                 self._path_message("No path found between the solar systems.", error=True)
         else:
+            self.tableWidget_path.setRowCount(0)
             error_msg = []
             if not source_sys_name:
                 error_msg.append("source")
@@ -171,6 +218,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.Slot()
     def line_edit_destination_return(self):
         self.find_path()
+
 
 def run():
     appl = QtGui.QApplication(sys.argv)

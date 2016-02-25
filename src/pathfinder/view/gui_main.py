@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Wed Feb 24 18:49:19 2016
+# Created: Thu Feb 25 10:52:09 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,9 @@ class Ui_MainWindow(object):
         self.line.setObjectName("line")
         self.verticalLayout_2.addWidget(self.line)
         self.tableWidget_path = QtGui.QTableWidget(self.groupBox)
+        self.tableWidget_path.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableWidget_path.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.tableWidget_path.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tableWidget_path.setRowCount(0)
         self.tableWidget_path.setColumnCount(0)
         self.tableWidget_path.setObjectName("tableWidget_path")
