@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Thu Feb 25 17:21:54 2016
+# Created: Thu Feb 25 22:15:33 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -150,6 +150,10 @@ class Ui_MainWindow(object):
         self.pushButton_trip_config.setObjectName("pushButton_trip_config")
         self.horizontalLayout_4.addWidget(self.pushButton_trip_config)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+        self.label_trip_status = QtGui.QLabel(self.groupBox__options)
+        self.label_trip_status.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_trip_status.setObjectName("label_trip_status")
+        self.verticalLayout_3.addWidget(self.label_trip_status)
         self.groupBox_restrictions = QtGui.QGroupBox(self.groupBox__options)
         self.groupBox_restrictions.setObjectName("groupBox_restrictions")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox_restrictions)
@@ -282,13 +286,14 @@ class Ui_MainWindow(object):
         self.label_source.setText(QtGui.QApplication.translate("MainWindow", "Source:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_player_location.setText(QtGui.QApplication.translate("MainWindow", "Player location", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_find_path.setText(QtGui.QApplication.translate("MainWindow", "Find path", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("MainWindow", "Status:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MainWindow", "Result:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_status.setText(QtGui.QApplication.translate("MainWindow", "Path status", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_set_dest.setText(QtGui.QApplication.translate("MainWindow", "Set in-game destination", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox__options.setTitle(QtGui.QApplication.translate("MainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_eve_login.setText(QtGui.QApplication.translate("MainWindow", "Log in with EvE", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_trip_get.setText(QtGui.QApplication.translate("MainWindow", "Get Tripwire Chain", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_trip_config.setText(QtGui.QApplication.translate("MainWindow", "Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_trip_status.setText(QtGui.QApplication.translate("MainWindow", "Not connected to Tripwire, yet", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_restrictions.setTitle(QtGui.QApplication.translate("MainWindow", "Restrictions", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_whsize_small.setText(QtGui.QApplication.translate("MainWindow", "Small", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_whsize_medium.setText(QtGui.QApplication.translate("MainWindow", "Medium", None, QtGui.QApplication.UnicodeUTF8))

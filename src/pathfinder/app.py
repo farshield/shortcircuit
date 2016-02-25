@@ -6,6 +6,8 @@ import StringIO
 from . import __appname__
 from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
+from view.gui_tripwire import Ui_TripwireDialog
+from view.gui_about import Ui_AboutDialog
 from model.navigation import Navigation
 
 
@@ -29,6 +31,29 @@ def label_message(label, message, error):
     label.setText(message)
 
 
+class TripwireDialog(QtGui.QDialog, Ui_TripwireDialog):
+    """
+    Tripwire Configuration Window
+    """
+    def __init__(self, trip_url, trip_user, trip_pass, parent=None):
+        super(TripwireDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.lineEdit_url.setText(trip_url)
+        self.lineEdit_user.setText(trip_user)
+        self.lineEdit_pass.setText(trip_pass)
+
+
+class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
+    """
+    Tripwire Configuration Window
+    """
+    def __init__(self, parent=None):
+        super(AboutDialog, self).__init__(parent)
+        self.setupUi(self)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_o7.clicked.connect(self.close)
+
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
     Main Window GUI
@@ -37,6 +62,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.scene_banner = None
+        self.tripwire_url = "https://tripwire.eve-apps.com"
+        self.tripwire_user = "username"
+        self.tripwire_pass = "password"
 
         # Read resources
         gates = [[int(rows[0]), int(rows[1])] for rows in dict_from_csvqfile(":database/system_jumps.csv")]
@@ -52,6 +80,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def additional_gui_setup(self):
         # Additional GUI setup
+        self.graphicsView_banner.mouseDoubleClickEvent = MainWindow.banner_double_click
         self.setWindowTitle(__appname__)
         self.scene_banner = QtGui.QGraphicsScene()
         self.graphicsView_banner.setScene(self.scene_banner)
@@ -191,13 +220,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             error_msg = "Invalid system name in {}.".format(" and ".join(error_msg))
             self._path_message(error_msg, error=True)
 
+    @staticmethod
+    def banner_double_click(_):
+        AboutDialog().exec_()
+
     @QtCore.Slot()
     def btn_find_path_clicked(self):
         self.find_path()
 
     @QtCore.Slot()
     def btn_trip_config_clicked(self):
-        pass
+        tripwire_dialog = TripwireDialog(
+            self.tripwire_url,
+            self.tripwire_user,
+            self.tripwire_pass
+        )
+
+        if tripwire_dialog.exec_():
+            self.tripwire_url = tripwire_dialog.lineEdit_url.text()
+            self.tripwire_user = tripwire_dialog.lineEdit_user.text()
+            self.tripwire_pass = tripwire_dialog.lineEdit_pass.text()
 
     @QtCore.Slot()
     def btn_trip_get_clicked(self):
