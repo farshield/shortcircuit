@@ -36,4 +36,17 @@ class Navigation:
             dest_id,
             [self.eve_db.name2id(x) for x in avoidance_list],
         )
-        return [self.eve_db.system_desc[x] for x in path]
+
+        route = []
+        for idx, x in enumerate(path):
+            if idx < len(path) - 1:
+                source = self.solar_map.get_system(x)
+                dest = self.solar_map.get_system(path[idx + 1])
+                weight = source.get_weight(dest)
+            else:
+                weight = None
+            system_description = list(self.eve_db.system_desc[x])
+            system_description.append(weight)
+            route.append(system_description)
+
+        return route

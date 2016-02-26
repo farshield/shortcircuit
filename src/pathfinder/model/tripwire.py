@@ -4,6 +4,7 @@ import json
 import requests
 import urlparse
 import logging
+from solarmap import SolarMap
 
 
 class Tripwire:
@@ -73,10 +74,21 @@ class Tripwire:
             for sig in chain["chain"]["map"]:
                 if sig["type"] != "GATE":
                     connections += 1
+
                     source = convert_to_int(sig["systemID"])
                     dest = convert_to_int(sig["connectionID"])
+                    sig_source = sig["signatureID"]
+                    sig_dest = sig["sig2ID"]
+                    code_source = sig["type"]
+                    code_dest = sig["sig2Type"]
+
                     if source != 0 and dest != 0:
-                        solar_map.add_connection(source, dest)
+                        solar_map.add_connection(
+                            source,
+                            dest,
+                            SolarMap.WORMHOLE,
+                            [sig_source, code_source, sig_dest, code_dest],
+                        )
 
         return connections
 

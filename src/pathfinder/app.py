@@ -9,6 +9,7 @@ from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
 from view.gui_tripwire import Ui_TripwireDialog
 from view.gui_about import Ui_AboutDialog
+from model.solarmap import SolarMap
 from model.navigation import Navigation
 from model.navprocessor import NavProcessor
 
@@ -131,8 +132,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             line_edit_field.setCompleter(completer)
 
         # Table configuration
-        self.tableWidget_path.setColumnCount(3)
-        self.tableWidget_path.setHorizontalHeaderLabels(["System name", "Class", "Security"])
+        self.tableWidget_path.setColumnCount(4)
+        self.tableWidget_path.setHorizontalHeaderLabels(["System name", "Class", "Security", "Instructions"])
         self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
 
         # Signals
@@ -232,11 +233,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
         self._avoid_system_name(sys_name)
 
+    def _get_instructions(self, column):
+        if column:
+            if column[0] == SolarMap.GATE:
+                instructions = "Jump gate"
+            elif column[0] == SolarMap.WORMHOLE:
+                [wh_sig, wh_code] = column[1]
+                instructions = "Jump wormhole {}[{}]".format(wh_sig, wh_code)
+            else:
+                instructions = "Instructions unclear, initiate self-destruct"
+        else:
+            instructions = "Destination reached"
+
+        return instructions
+
     def add_data_to_table(self, route):
         self.tableWidget_path.setRowCount(len(route))
         for i, row in enumerate(route):
             for j, col in enumerate(row):
-                item = QtGui.QTableWidgetItem("{}".format(col))
+                if j == len(row) - 1:  # last column is the instruction column
+                    item = QtGui.QTableWidgetItem(self._get_instructions(col))
+                else:
+                    item = QtGui.QTableWidgetItem("{}".format(col))
                 self.tableWidget_path.setItem(i, j, item)
 
                 if j in [1, 2]:
@@ -263,7 +281,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self.avoidance_enabled():
             if dest_sys_name in self.avoidance_list():
-                self._path_message("Destination is in the avoidance list, dummy ;)", error=True)
+                self._path_message("Destination in avoidance list, dummy ;)", error=True)
                 return
 
         if source_sys_name and dest_sys_name:
@@ -275,7 +293,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if route:
                 route_length = len(route)
                 if route_length == 1:
-                    self._path_message("Setting the same source and destination :P", error=False)
+                    self._path_message("Set the same source and destination :P", error=False)
                 else:
                     self._path_message("Total number of jumps: {}".format(route_length - 1), error=False)
 
@@ -309,7 +327,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if connections > 0:
             self._trip_message("Retrieved {} connections!".format(connections), error=0)
         else:
-            self._trip_message("No Tripwire connections. Check url/user/pass.", error=1)
+            self._trip_message("Error. Check url/user/pass.", error=1)
 
         self.pushButton_trip_get.setEnabled(True)
         self.pushButton_find_path.setEnabled(True)
@@ -377,7 +395,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.Slot()
     def table_item_selection_changed(self):
         selection = self.tableWidget_path.selectedItems()
-        self.lineEdit_set_dest.setText(selection[0].text())
+        if selection:
+            self.lineEdit_set_dest.setText(selection[0].text())
 
     # event: QCloseEvent
     def closeEvent(self, event):

@@ -12,7 +12,7 @@ class SolarSystem:
         self.id = key
         self.connected_to = {}
 
-    def add_neighbor(self, neighbor, weight=0):
+    def add_neighbor(self, neighbor, weight):
         self.connected_to[neighbor] = weight
 
     def get_connections(self):
@@ -29,6 +29,9 @@ class SolarMap:
     """
     Solar map handler
     """
+
+    GATE = 0
+    WORMHOLE = 1
 
     def __init__(self):
         self.systems_list = {}
@@ -49,21 +52,34 @@ class SolarMap:
     def get_all_systems(self):
         return self.systems_list.keys()
 
-    def add_connection(self, source, destination, weight=0):
-        """
-        Add non-directed connection
-        :param source: Source system
-        :param destination: Destination system
-        :param weight:
-        :return:
-        """
+    def add_connection(
+            self,
+            source,
+            destination,
+            con_type,
+            con_info=None,
+    ):
         if source not in self.systems_list:
             self.add_system(source)
         if destination not in self.systems_list:
             self.add_system(destination)
 
-        self.systems_list[source].add_neighbor(self.systems_list[destination], weight)
-        self.systems_list[destination].add_neighbor(self.systems_list[source], weight)
+        if con_type == SolarMap.GATE:
+            self.systems_list[source].add_neighbor(self.systems_list[destination], [SolarMap.GATE, None])
+            self.systems_list[destination].add_neighbor(self.systems_list[source], [SolarMap.GATE, None])
+        elif con_type == SolarMap.WORMHOLE:
+            [sig_source, code_source, sig_dest, code_dest] = con_info
+            self.systems_list[source].add_neighbor(
+                self.systems_list[destination],
+                [SolarMap.WORMHOLE, [sig_source, code_source]]
+            )
+            self.systems_list[destination].add_neighbor(
+                self.systems_list[source],
+                [SolarMap.WORMHOLE, [sig_dest, code_dest]]
+            )
+        else:
+            # you shouldn't be here
+            pass
 
     def __contains__(self, item):
         return item in self.systems_list

@@ -16,7 +16,7 @@ class EveDb:
     def get_solar_map(self):
         solar_map = SolarMap()
         for row in self.gates:
-            solar_map.add_connection(row[0], row[1])
+            solar_map.add_connection(row[0], row[1], SolarMap.GATE)
 
         return solar_map
 
