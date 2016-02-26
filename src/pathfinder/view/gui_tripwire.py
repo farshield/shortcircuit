@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_tripwire.ui'
 #
-# Created: Thu Feb 25 22:15:34 2016
+# Created: Fri Feb 26 10:00:55 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,9 @@ class Ui_TripwireDialog(object):
         TripwireDialog.setSizePolicy(sizePolicy)
         TripwireDialog.setMinimumSize(QtCore.QSize(400, 255))
         TripwireDialog.setMaximumSize(QtCore.QSize(400, 255))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/app_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        TripwireDialog.setWindowIcon(icon)
         TripwireDialog.setSizeGripEnabled(False)
         self.gridLayout = QtGui.QGridLayout(TripwireDialog)
         self.gridLayout.setObjectName("gridLayout")

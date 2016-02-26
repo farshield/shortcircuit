@@ -3,6 +3,9 @@
     <file>database/system_description.csv</file>
     <file>database/system_jumps.csv</file>
     <file>database/statics.csv</file>
+    <file>images/app_icon.png</file>
+    <file>images/app_icon_small.png</file>
+    <file>images/author.png</file>
     <file>images/wds_logo.png</file>
     <file>images/eve_logo.png</file>
     <file>images/tripwire_logo.png</file>

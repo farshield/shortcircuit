@@ -4,6 +4,8 @@ import sys
 import csv
 import StringIO
 from . import __appname__
+from . import __version__
+from . import __author__
 from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
 from view.gui_tripwire import Ui_TripwireDialog
@@ -47,9 +49,11 @@ class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
     """
     Tripwire Configuration Window
     """
-    def __init__(self, parent=None):
+    def __init__(self, author, version, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
+        self.label_title.setText("Pathfinder {}".format(version))
+        self.label_author.setText("Developer: {}".format(author))
         # noinspection PyUnresolvedReferences
         self.pushButton_o7.clicked.connect(self.close)
 
@@ -222,7 +226,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @staticmethod
     def banner_double_click(_):
-        AboutDialog().exec_()
+        AboutDialog(__author__, __version__).exec_()
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):

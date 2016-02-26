@@ -31,6 +31,10 @@
   <property name="windowTitle">
    <string>Tripwire Configuration</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/images/app_icon.png</normaloff>:/images/app_icon.png</iconset>
+  </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>
