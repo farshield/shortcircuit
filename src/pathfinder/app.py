@@ -3,9 +3,7 @@
 import sys
 import csv
 import StringIO
-from . import __appname__
-from . import __version__
-from . import __author__
+from . import __appname__, __version__, __author__, __organization__
 from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
 from view.gui_tripwire import Ui_TripwireDialog
@@ -65,6 +63,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        self.settings = QtCore.QSettings(
+            QtCore.QSettings.IniFormat,
+            QtCore.QSettings.UserScope,
+            __organization__,
+            __appname__
+        )
+
         self.scene_banner = None
         self.tripwire_url = "https://tripwire.eve-apps.com"
         self.tripwire_user = "username"
@@ -81,6 +86,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Additional GUI setup
         self.additional_gui_setup()
+
+        # Read stored settings
+        self.read_settings()
 
     def additional_gui_setup(self):
         # Additional GUI setup
@@ -134,6 +142,45 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # noinspection PyUnresolvedReferences
         self.tableWidget_path.itemSelectionChanged.connect(self.table_item_selection_changed)
 
+    def read_settings(self):
+        self.settings.beginGroup("MainWindow")
+
+        # Tripwire infor
+        self.tripwire_url = self.settings.value("tripwire_url", "https://tripwire.eve-apps.com")
+        self.tripwire_user = self.settings.value("tripwire_user", "username")
+        self.tripwire_pass = self.settings.value("tripwire_pass", "password")
+
+        # Avoidance list
+        self.checkBox_avoid_enabled.setChecked(
+            True if self.settings.value("avoidance_enabled", "false") == "true" else False
+        )
+        for sys_name in self.settings.value("avoidance_list", "").split(','):
+            if sys_name != "":
+                self._avoid_system_name(sys_name)
+
+        self.settings.endGroup()
+
+    def write_settings(self):
+        self.settings.beginGroup("MainWindow")
+
+        # Tripwire info
+        self.settings.setValue("tripwire_url", self.tripwire_url)
+        self.settings.setValue("tripwire_user", self.tripwire_user)
+        self.settings.setValue("tripwire_pass", self.tripwire_pass)
+
+        # Avoidance list
+        self.settings.setValue(
+            "avoidance_enabled",
+            self.checkBox_avoid_enabled.isChecked()
+        )
+        avoidance_list_string = ",".join(self.avoidance_list())
+        self.settings.setValue(
+            "avoidance_list",
+            avoidance_list_string
+        )
+
+        self.settings.endGroup()
+
     def _avoid_message(self, message, error):
         label_message(self.label_avoid_status, message, error)
 
@@ -149,11 +196,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             items.append(self.listWidget_avoid.item(index))
         return [i.text() for i in items]
 
-    def avoid_system(self):
-        sys_name = self.nav.eve_db.normalize_name(
-            self.lineEdit_avoid_name.text()
-        )
-
+    def _avoid_system_name(self, sys_name):
         if sys_name:
             if sys_name not in self.avoidance_list():
                 QtGui.QListWidgetItem(sys_name, self.listWidget_avoid)
@@ -162,6 +205,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._avoid_message("Already in list!", error=True)
         else:
             self._avoid_message("Invalid system name :(", error=True)
+
+    def avoid_system(self):
+        sys_name = self.nav.eve_db.normalize_name(
+            self.lineEdit_avoid_name.text()
+        )
+        self._avoid_system_name(sys_name)
 
     def add_data_to_table(self, route):
         self.tableWidget_path.setRowCount(len(route))
@@ -225,7 +274,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._path_message(error_msg, error=True)
 
     @staticmethod
-    def banner_double_click(_):
+    def banner_double_click(event):
+        event.accept()
         AboutDialog(__author__, __version__).exec_()
 
     @QtCore.Slot()
@@ -282,6 +332,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def table_item_selection_changed(self):
         selection = self.tableWidget_path.selectedItems()
         self.lineEdit_set_dest.setText(selection[0].text())
+
+    # event: QCloseEvent
+    def closeEvent(self, event):
+        self.write_settings()
+        event.accept()
 
 
 def run():
