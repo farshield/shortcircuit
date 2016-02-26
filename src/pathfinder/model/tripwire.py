@@ -34,8 +34,8 @@ class Tripwire:
                 data=payload,
                 headers=dict(referer=login_url)
             )
-        except requests.exceptions.RequestException as e:
-            logging.error(e, exc_info=True)
+        except requests.exceptions.RequestException:
+            logging.warning("Unable to connect to Tripwire")
         else:
             if result.status_code == 200:
                 response = session_requests
@@ -66,19 +66,19 @@ class Tripwire:
         return response
 
     def augment_map(self, solar_map):
-        status = False
+        connections = 0
         chain = self.get_chain()
 
         if chain:
             for sig in chain["chain"]["map"]:
                 if sig["type"] != "GATE":
+                    connections += 1
                     source = convert_to_int(sig["systemID"])
                     dest = convert_to_int(sig["connectionID"])
                     if source != 0 and dest != 0:
                         solar_map.add_connection(source, dest)
-            status = True
 
-        return status
+        return connections
 
 
 def is_json(response):

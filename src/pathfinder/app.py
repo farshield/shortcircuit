@@ -1,6 +1,7 @@
 # app.py
 
 import sys
+import time
 import csv
 import StringIO
 from . import __appname__, __version__, __author__, __organization__
@@ -9,6 +10,7 @@ from view.gui_main import Ui_MainWindow
 from view.gui_tripwire import Ui_TripwireDialog
 from view.gui_about import Ui_AboutDialog
 from model.navigation import Navigation
+from model.navprocessor import NavProcessor
 
 
 def dict_from_csvqfile(file_path):
@@ -75,6 +77,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tripwire_user = "username"
         self.tripwire_pass = "password"
 
+        # Read stored settings
+        self.read_settings()
+
         # Read resources
         gates = [[int(rows[0]), int(rows[1])] for rows in dict_from_csvqfile(":database/system_jumps.csv")]
         system_desc = {
@@ -82,13 +87,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             for rows in dict_from_csvqfile(":database/system_description.csv")
         }
         wh_codes = {rows[0]: int(rows[1]) for rows in dict_from_csvqfile(":database/statics.csv")}
-        self.nav = Navigation(gates, system_desc, wh_codes)
+        self.nav = Navigation(
+            gates,
+            system_desc,
+            wh_codes,
+            self.tripwire_url,
+            self.tripwire_user,
+            self.tripwire_pass
+        )
 
         # Additional GUI setup
         self.additional_gui_setup()
 
-        # Read stored settings
-        self.read_settings()
+        # Thread initial config
+        self.worker_thread = QtCore.QThread()
+        self.nav_processor = NavProcessor(self.nav)
+        self.nav_processor.moveToThread(self.worker_thread)
+        self.nav_processor.finished.connect(self.thread_done)
+        # noinspection PyUnresolvedReferences
+        self.worker_thread.started.connect(self.nav_processor.process)
 
     def additional_gui_setup(self):
         # Additional GUI setup
@@ -187,6 +204,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _path_message(self, message, error):
         label_message(self.label_status, message, error)
 
+    def _trip_message(self, message, error):
+        label_message(self.label_trip_status, message, error)
+
     def avoidance_enabled(self):
         return self.checkBox_avoid_enabled.isChecked()
 
@@ -278,6 +298,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         event.accept()
         AboutDialog(__author__, __version__).exec_()
 
+    @QtCore.Slot(int)
+    def thread_done(self, connections):
+        self.worker_thread.quit()
+
+        # wait for thread to finish
+        while self.worker_thread.isRunning():
+            time.sleep(0.01)
+
+        if connections > 0:
+            self._trip_message("Retrieved {} connections!".format(connections), error=0)
+        else:
+            self._trip_message("No Tripwire connections. Check url/user/pass.", error=1)
+
+        self.pushButton_trip_get.setEnabled(True)
+        self.pushButton_find_path.setEnabled(True)
+
     @QtCore.Slot()
     def btn_find_path_clicked(self):
         self.find_path()
@@ -294,10 +330,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.tripwire_url = tripwire_dialog.lineEdit_url.text()
             self.tripwire_user = tripwire_dialog.lineEdit_user.text()
             self.tripwire_pass = tripwire_dialog.lineEdit_pass.text()
+            self.nav.tripwire_set_login(
+                self.tripwire_url,
+                self.tripwire_user,
+                self.tripwire_pass
+            )
 
     @QtCore.Slot()
     def btn_trip_get_clicked(self):
-        pass
+        if not self.worker_thread.isRunning():
+            self.pushButton_trip_get.setEnabled(False)
+            self.pushButton_find_path.setEnabled(False)
+            self.worker_thread.start()
+        else:
+            self._trip_message("Error! Process already running", error=1)
 
     @QtCore.Slot()
     def btn_avoid_add_clicked(self):
