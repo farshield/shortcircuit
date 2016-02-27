@@ -55,7 +55,11 @@ class Navigation:
         )
 
         route = []
+        short_format = ""
+        prev_gate = None  # Previous gate - will be the system ID of the previous system if connection was a gate
+
         for idx, x in enumerate(path):
+            # Construct route
             if idx < len(path) - 1:
                 source = self.solar_map.get_system(x)
                 dest = self.solar_map.get_system(path[idx + 1])
@@ -66,4 +70,28 @@ class Navigation:
             system_description.append(Navigation._get_instructions(weight))
             route.append(system_description)
 
-        return route
+            # Build short format message (traveling between multiple consecutive gates will be denoted as '...')
+            if not weight:
+                # destination reached
+                if prev_gate:
+                    if prev_gate != path[idx - 1]:
+                        short_format += "...-->"
+                short_format += system_description[0]
+            else:
+                # keep looking
+                if weight[0] == SolarMap.WORMHOLE:
+                    if prev_gate:
+                        if prev_gate != path[idx - 1]:
+                            short_format += "...-->"
+                    [wh_sig, _, _] = weight[1]
+                    short_format += system_description[0] + "[{}]~~>".format(wh_sig)
+                    prev_gate = None
+                elif weight[0] == SolarMap.GATE:
+                    if not prev_gate:
+                        short_format += system_description[0] + "-->"
+                        prev_gate = path[idx]
+                else:
+                    # Not supposed to be here
+                    short_format += "Where am I?-->"
+
+        return [route, short_format]

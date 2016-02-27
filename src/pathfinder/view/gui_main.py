@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Sat Feb 27 14:47:33 2016
+# Created: Sat Feb 27 18:40:48 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,19 +92,27 @@ class Ui_MainWindow(object):
         self.tableWidget_path.setColumnCount(0)
         self.tableWidget_path.setRowCount(0)
         self.verticalLayout_2.addWidget(self.tableWidget_path)
-        self.horizontalLayout_6 = QtGui.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.pushButton_set_dest = QtGui.QPushButton(self.groupBox)
-        self.pushButton_set_dest.setEnabled(False)
-        self.pushButton_set_dest.setIcon(icon1)
-        self.pushButton_set_dest.setObjectName("pushButton_set_dest")
-        self.horizontalLayout_6.addWidget(self.pushButton_set_dest)
+        self.gridLayout_3 = QtGui.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
         self.lineEdit_set_dest = QtGui.QLineEdit(self.groupBox)
         self.lineEdit_set_dest.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lineEdit_set_dest.setMaxLength(32)
         self.lineEdit_set_dest.setObjectName("lineEdit_set_dest")
-        self.horizontalLayout_6.addWidget(self.lineEdit_set_dest)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_6)
+        self.gridLayout_3.addWidget(self.lineEdit_set_dest, 0, 1, 1, 1)
+        self.pushButton_set_dest = QtGui.QPushButton(self.groupBox)
+        self.pushButton_set_dest.setEnabled(False)
+        self.pushButton_set_dest.setIcon(icon1)
+        self.pushButton_set_dest.setObjectName("pushButton_set_dest")
+        self.gridLayout_3.addWidget(self.pushButton_set_dest, 0, 0, 1, 1)
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_3.addWidget(self.label_2, 1, 0, 1, 1)
+        self.lineEdit_short_format = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit_short_format.setReadOnly(True)
+        self.lineEdit_short_format.setObjectName("lineEdit_short_format")
+        self.gridLayout_3.addWidget(self.lineEdit_short_format, 1, 1, 1, 1)
+        self.verticalLayout_2.addLayout(self.gridLayout_3)
         self.horizontalLayout.addWidget(self.groupBox)
         self.groupBox__options = QtGui.QGroupBox(self.centralwidget)
         self.groupBox__options.setMinimumSize(QtCore.QSize(280, 0))
@@ -293,6 +301,8 @@ class Ui_MainWindow(object):
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Result:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_status.setText(QtGui.QApplication.translate("MainWindow", "Path status", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_set_dest.setText(QtGui.QApplication.translate("MainWindow", "Set in-game destination", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("MainWindow", "FC, please help!", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_short_format.setPlaceholderText(QtGui.QApplication.translate("MainWindow", "For quick copy-pasting of info", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox__options.setTitle(QtGui.QApplication.translate("MainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_eve_login.setText(QtGui.QApplication.translate("MainWindow", "Log in with EvE", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_trip_get.setText(QtGui.QApplication.translate("MainWindow", "Get Tripwire Chain", None, QtGui.QApplication.UnicodeUTF8))

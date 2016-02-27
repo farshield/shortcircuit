@@ -325,25 +325,39 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         return restrictions
 
+    def _clear_results(self):
+        self.tableWidget_path.setRowCount(0)
+        self.lineEdit_short_format.setText("")
+
     def find_path(self):
         source_sys_name = self.nav.eve_db.normalize_name(
-            self.lineEdit_source.text()
+            self.lineEdit_source.text().strip()
         )
         dest_sys_name = self.nav.eve_db.normalize_name(
-            self.lineEdit_destination.text()
+            self.lineEdit_destination.text().strip()
         )
 
         if self.avoidance_enabled():
             if dest_sys_name in self.avoidance_list():
                 self._path_message("Destination in avoidance list, dummy ;)", MainWindow.MSG_ERROR)
-                self.tableWidget_path.setRowCount(0)
+                self._clear_results()
                 return
 
         if source_sys_name and dest_sys_name:
             if self.avoidance_enabled():
-                route = self.nav.route(source_sys_name, dest_sys_name, self.avoidance_list(), self.get_restrictions())
+                [route, short_format] = self.nav.route(
+                    source_sys_name,
+                    dest_sys_name,
+                    self.avoidance_list(),
+                    self.get_restrictions()
+                )
             else:
-                route = self.nav.route(source_sys_name, dest_sys_name, [], self.get_restrictions())
+                [route, short_format] = self.nav.route(
+                    source_sys_name,
+                    dest_sys_name,
+                    [],
+                    self.get_restrictions()
+                )
 
             if route:
                 route_length = len(route)
@@ -353,11 +367,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self._path_message("Total number of jumps: {}".format(route_length - 1), MainWindow.MSG_OK)
 
                 self.add_data_to_table(route)
+                self.lineEdit_short_format.setText(short_format)
             else:
-                self.tableWidget_path.setRowCount(0)
+                self._clear_results()
                 self._path_message("No path found between the solar systems.", MainWindow.MSG_ERROR)
         else:
-            self.tableWidget_path.setRowCount(0)
+            self._clear_results()
             error_msg = []
             if not source_sys_name:
                 error_msg.append("source")
