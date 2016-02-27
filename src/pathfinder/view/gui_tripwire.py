@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_tripwire.ui'
 #
-# Created: Sat Feb 27 12:24:12 2016
+# Created: Sat Feb 27 14:47:33 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!

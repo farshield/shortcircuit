@@ -12,7 +12,8 @@ class Tripwire:
     Tripwire handler
     """
 
-    def __init__(self, username, password, url):
+    def __init__(self, eve_db, username, password, url):
+        self.eve_db = eve_db
         self.username = username
         self.password = password
         self.url = url
@@ -83,11 +84,23 @@ class Tripwire:
                     code_dest = sig["sig2Type"]
 
                     if source != 0 and dest != 0:
+                        # Determine wormhole size
+                        size_result1 = self.eve_db.get_whsize_by_code(code_source)
+                        size_result2 = self.eve_db.get_whsize_by_code(code_dest)
+                        if size_result1:
+                            wh_size = size_result1
+                        elif size_result2:
+                            wh_size = size_result2
+                        else:
+                            # Wormhole codes are unknown => determine size based on class of wormholes
+                            wh_size = self.eve_db.get_whsize_by_system(source, dest)
+
+                        # Add wormhole conection to solar system
                         solar_map.add_connection(
                             source,
                             dest,
                             SolarMap.WORMHOLE,
-                            [sig_source, code_source, sig_dest, code_dest],
+                            [sig_source, code_source, sig_dest, code_dest, wh_size],
                         )
 
         return connections

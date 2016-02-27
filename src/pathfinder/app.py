@@ -11,6 +11,7 @@ from view.gui_tripwire import Ui_TripwireDialog
 from view.gui_about import Ui_AboutDialog
 from model.navigation import Navigation
 from model.navprocessor import NavProcessor
+from model.evedb import EveDb
 
 
 def dict_from_csvqfile(file_path):
@@ -185,6 +186,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if sys_name != "":
                 self._avoid_system_name(sys_name)
 
+        # Restrictions
+        self.checkBox_whsize_small.setChecked(
+            True if self.settings.value("restriction_whsize_small", "true") == "true" else False
+        )
+        self.checkBox_whsize_medium.setChecked(
+            True if self.settings.value("restriction_whsize_medium", "true") == "true" else False
+        )
+        self.checkBox_whsize_large.setChecked(
+            True if self.settings.value("restriction_whsize_large", "true") == "true" else False
+        )
+        self.checkBox_whsize_xl.setChecked(
+            True if self.settings.value("restriction_whsize_xl", "true") == "true" else False
+        )
+
         self.settings.endGroup()
 
     def write_settings(self):
@@ -209,6 +224,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.settings.setValue(
             "avoidance_list",
             avoidance_list_string
+        )
+
+        # Restrictions
+        self.settings.setValue(
+            "restriction_whsize_small",
+            self.checkBox_whsize_small.isChecked()
+        )
+        self.settings.setValue(
+            "restriction_whsize_medium",
+            self.checkBox_whsize_medium.isChecked()
+        )
+        self.settings.setValue(
+            "restriction_whsize_large",
+            self.checkBox_whsize_large.isChecked()
+        )
+        self.settings.setValue(
+            "restriction_whsize_xl",
+            self.checkBox_whsize_xl.isChecked()
         )
 
         self.settings.endGroup()
@@ -278,6 +311,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 self.tableWidget_path.item(i, j).setBackground(color)
 
+    def get_restrictions(self):
+        restrictions = []
+
+        if self.checkBox_whsize_small.isChecked():
+            restrictions.append(EveDb.WHSIZE_S)
+        if self.checkBox_whsize_medium.isChecked():
+            restrictions.append(EveDb.WHSIZE_M)
+        if self.checkBox_whsize_large.isChecked():
+            restrictions.append(EveDb.WHSIZE_L)
+        if self.checkBox_whsize_xl.isChecked():
+            restrictions.append(EveDb.WHSIZE_XL)
+
+        return restrictions
+
     def find_path(self):
         source_sys_name = self.nav.eve_db.normalize_name(
             self.lineEdit_source.text()
@@ -294,9 +341,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if source_sys_name and dest_sys_name:
             if self.avoidance_enabled():
-                route = self.nav.route(source_sys_name, dest_sys_name, self.avoidance_list())
+                route = self.nav.route(source_sys_name, dest_sys_name, self.avoidance_list(), self.get_restrictions())
             else:
-                route = self.nav.route(source_sys_name, dest_sys_name, [])
+                route = self.nav.route(source_sys_name, dest_sys_name, [], self.get_restrictions())
 
             if route:
                 route_length = len(route)

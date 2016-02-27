@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Sat Feb 27 12:24:11 2016
+# Created: Sat Feb 27 14:47:33 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -164,22 +164,22 @@ class Ui_MainWindow(object):
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.checkBox_whsize_small = QtGui.QCheckBox(self.groupBox_restrictions)
-        self.checkBox_whsize_small.setEnabled(False)
+        self.checkBox_whsize_small.setEnabled(True)
         self.checkBox_whsize_small.setChecked(True)
         self.checkBox_whsize_small.setObjectName("checkBox_whsize_small")
         self.gridLayout_2.addWidget(self.checkBox_whsize_small, 1, 0, 1, 1)
         self.checkBox_whsize_medium = QtGui.QCheckBox(self.groupBox_restrictions)
-        self.checkBox_whsize_medium.setEnabled(False)
+        self.checkBox_whsize_medium.setEnabled(True)
         self.checkBox_whsize_medium.setChecked(True)
         self.checkBox_whsize_medium.setObjectName("checkBox_whsize_medium")
         self.gridLayout_2.addWidget(self.checkBox_whsize_medium, 2, 0, 1, 1)
         self.checkBox_whsize_xl = QtGui.QCheckBox(self.groupBox_restrictions)
-        self.checkBox_whsize_xl.setEnabled(False)
+        self.checkBox_whsize_xl.setEnabled(True)
         self.checkBox_whsize_xl.setChecked(True)
         self.checkBox_whsize_xl.setObjectName("checkBox_whsize_xl")
         self.gridLayout_2.addWidget(self.checkBox_whsize_xl, 2, 1, 1, 1)
         self.checkBox_whsize_large = QtGui.QCheckBox(self.groupBox_restrictions)
-        self.checkBox_whsize_large.setEnabled(False)
+        self.checkBox_whsize_large.setEnabled(True)
         self.checkBox_whsize_large.setChecked(True)
         self.checkBox_whsize_large.setObjectName("checkBox_whsize_large")
         self.gridLayout_2.addWidget(self.checkBox_whsize_large, 1, 1, 1, 1)

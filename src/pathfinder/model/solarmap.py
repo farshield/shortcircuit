@@ -68,14 +68,14 @@ class SolarMap:
             self.systems_list[source].add_neighbor(self.systems_list[destination], [SolarMap.GATE, None])
             self.systems_list[destination].add_neighbor(self.systems_list[source], [SolarMap.GATE, None])
         elif con_type == SolarMap.WORMHOLE:
-            [sig_source, code_source, sig_dest, code_dest] = con_info
+            [sig_source, code_source, sig_dest, code_dest, wh_size] = con_info
             self.systems_list[source].add_neighbor(
                 self.systems_list[destination],
-                [SolarMap.WORMHOLE, [sig_source, code_source]]
+                [SolarMap.WORMHOLE, [sig_source, code_source, wh_size]]
             )
             self.systems_list[destination].add_neighbor(
                 self.systems_list[source],
-                [SolarMap.WORMHOLE, [sig_dest, code_dest]]
+                [SolarMap.WORMHOLE, [sig_dest, code_dest, wh_size]]
             )
         else:
             # you shouldn't be here
@@ -87,8 +87,9 @@ class SolarMap:
     def __iter__(self):
         return iter(self.systems_list.values())
 
-    def shortest_path(self, source, destination, avoidance_list):
+    def shortest_path(self, source, destination, avoidance_list, size_restriction):
         path = []
+        size_restriction = set(size_restriction)
 
         if source in self.systems_list and destination in self.systems_list:
             if source == destination:
@@ -107,6 +108,7 @@ class SolarMap:
                     current_sys = queue.popleft()
 
                     if current_sys.get_id() == destination:
+                        # Found!
                         path.append(destination)
                         while True:
                             parent_id = parent[current_sys].get_id()
@@ -118,9 +120,24 @@ class SolarMap:
                                 path.reverse()
                                 return path
                     else:
+                        # Keep searching
                         for neighbor in [x for x in current_sys.get_connections() if x not in visited]:
-                            parent[neighbor] = current_sys
-                            visited.add(neighbor)
-                            queue.append(neighbor)
+                            # Connection check (gate or wormhole size)
+                            [con_type, con_info] = current_sys.get_weight(neighbor)
+                            if con_type == SolarMap.GATE:
+                                proceed = True
+                            elif con_type == SolarMap.WORMHOLE:
+                                wh_size = con_info[2]
+                                if wh_size in size_restriction:
+                                    proceed = True
+                                else:
+                                    proceed = False
+                            else:
+                                proceed = False
+
+                            if proceed:
+                                parent[neighbor] = current_sys
+                                visited.add(neighbor)
+                                queue.append(neighbor)
 
         return path

@@ -26,7 +26,7 @@ class Navigation:
         self.trip_pass = trip_pass
 
     def tripwire_augment(self, solar_map):
-        trip = Tripwire(self.trip_user, self.trip_pass, self.trip_url)
+        trip = Tripwire(self.eve_db, self.trip_user, self.trip_pass, self.trip_url)
         return trip.augment_map(solar_map)
 
     @staticmethod
@@ -35,7 +35,7 @@ class Navigation:
             if weight[0] == SolarMap.GATE:
                 instructions = "Jump gate"
             elif weight[0] == SolarMap.WORMHOLE:
-                [wh_sig, wh_code] = weight[1]
+                [wh_sig, wh_code, _] = weight[1]
                 instructions = "Jump wormhole {}[{}]".format(wh_sig, wh_code)
             else:
                 instructions = "Instructions unclear, initiate self-destruct"
@@ -44,13 +44,14 @@ class Navigation:
 
         return instructions
 
-    def route(self, source, destination, avoidance_list):
+    def route(self, source, destination, avoidance_list, size_restriction):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
         path = self.solar_map.shortest_path(
             source_id,
             dest_id,
             [self.eve_db.name2id(x) for x in avoidance_list],
+            size_restriction,
         )
 
         route = []
