@@ -9,7 +9,6 @@ from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
 from view.gui_tripwire import Ui_TripwireDialog
 from view.gui_about import Ui_AboutDialog
-from model.solarmap import SolarMap
 from model.navigation import Navigation
 from model.navprocessor import NavProcessor
 
@@ -24,14 +23,6 @@ def dict_from_csvqfile(file_path):
         reader = csv.reader(f, delimiter=';')
 
     return reader
-
-
-def label_message(label, message, error):
-    if error:
-        label.setStyleSheet("QLabel {color: red;}")
-    else:
-        label.setStyleSheet("QLabel {color: green;}")
-    label.setText(message)
 
 
 class TripwireDialog(QtGui.QDialog, Ui_TripwireDialog):
@@ -63,6 +54,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
     Main Window GUI
     """
+
+    MSG_OK = 2
+    MSG_ERROR = 1
+    MSG_INFO = 0
+
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
@@ -115,8 +111,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.scene_banner = QtGui.QGraphicsScene()
         self.graphicsView_banner.setScene(self.scene_banner)
         self.scene_banner.addPixmap(QtGui.QPixmap(":images/wds_logo.png"))
-        self._path_message("", error=False)
-        self._avoid_message("", error=False)
+        self._path_message("", MainWindow.MSG_OK)
+        self._avoid_message("", MainWindow.MSG_OK)
         self.lineEdit_source.setFocus()
 
         # Auto-completion
@@ -152,6 +148,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # noinspection PyUnresolvedReferences
         self.pushButton_set_dest.clicked.connect(self.btn_set_dest_clicked)
         # noinspection PyUnresolvedReferences
+        self.pushButton_reset.clicked.connect(self.btn_reset_clicked)
+        # noinspection PyUnresolvedReferences
         self.lineEdit_source.returnPressed.connect(self.line_edit_source_return)
         # noinspection PyUnresolvedReferences
         self.lineEdit_destination.returnPressed.connect(self.line_edit_destination_return)
@@ -163,7 +161,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def read_settings(self):
         self.settings.beginGroup("MainWindow")
 
-        # Tripwire infor
+        # Window state
+        win_pos = self.settings.value("win_pos")
+        if win_pos:
+            self.move(win_pos)
+        win_size = self.settings.value("win_size")
+        if win_size:
+            self.resize(win_size)
+        is_maximized = True if self.settings.value("win_maximized", "false") == "true" else False
+        if is_maximized:
+            self.showMaximized()
+
+        # Tripwire info
         self.tripwire_url = self.settings.value("tripwire_url", "https://tripwire.eve-apps.com")
         self.tripwire_user = self.settings.value("tripwire_user", "username")
         self.tripwire_pass = self.settings.value("tripwire_pass", "password")
@@ -180,6 +189,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def write_settings(self):
         self.settings.beginGroup("MainWindow")
+
+        # Window state
+        self.settings.setValue("win_pos", self.pos())
+        self.settings.setValue("win_size", self.size())
+        self.settings.setValue("win_maximized", self.isMaximized())
 
         # Tripwire info
         self.settings.setValue("tripwire_url", self.tripwire_url)
@@ -199,14 +213,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.settings.endGroup()
 
-    def _avoid_message(self, message, error):
-        label_message(self.label_avoid_status, message, error)
+    @staticmethod
+    def _label_message(label, message, message_type):
+        if message_type == MainWindow.MSG_OK:
+            label.setStyleSheet("QLabel {color: green;}")
+        elif message_type == MainWindow.MSG_ERROR:
+            label.setStyleSheet("QLabel {color: red;}")
+        else:
+            label.setStyleSheet("QLabel {color: black;}")
+        label.setText(message)
 
-    def _path_message(self, message, error):
-        label_message(self.label_status, message, error)
+    def _avoid_message(self, message, message_type):
+        MainWindow._label_message(self.label_avoid_status, message, message_type)
 
-    def _trip_message(self, message, error):
-        label_message(self.label_trip_status, message, error)
+    def _path_message(self, message, message_type):
+        MainWindow._label_message(self.label_status, message, message_type)
+
+    def _trip_message(self, message, message_type):
+        MainWindow._label_message(self.label_trip_status, message, message_type)
 
     def avoidance_enabled(self):
         return self.checkBox_avoid_enabled.isChecked()
@@ -221,11 +245,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if sys_name:
             if sys_name not in self.avoidance_list():
                 QtGui.QListWidgetItem(sys_name, self.listWidget_avoid)
-                self._avoid_message("Added", error=False)
+                self._avoid_message("Added", MainWindow.MSG_OK)
             else:
-                self._avoid_message("Already in list!", error=True)
+                self._avoid_message("Already in list!", MainWindow.MSG_ERROR)
         else:
-            self._avoid_message("Invalid system name :(", error=True)
+            self._avoid_message("Invalid system name :(", MainWindow.MSG_ERROR)
 
     def avoid_system(self):
         sys_name = self.nav.eve_db.normalize_name(
@@ -233,28 +257,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
         self._avoid_system_name(sys_name)
 
-    def _get_instructions(self, column):
-        if column:
-            if column[0] == SolarMap.GATE:
-                instructions = "Jump gate"
-            elif column[0] == SolarMap.WORMHOLE:
-                [wh_sig, wh_code] = column[1]
-                instructions = "Jump wormhole {}[{}]".format(wh_sig, wh_code)
-            else:
-                instructions = "Instructions unclear, initiate self-destruct"
-        else:
-            instructions = "Destination reached"
-
-        return instructions
-
     def add_data_to_table(self, route):
         self.tableWidget_path.setRowCount(len(route))
         for i, row in enumerate(route):
             for j, col in enumerate(row):
-                if j == len(row) - 1:  # last column is the instruction column
-                    item = QtGui.QTableWidgetItem(self._get_instructions(col))
-                else:
-                    item = QtGui.QTableWidgetItem("{}".format(col))
+                item = QtGui.QTableWidgetItem("{}".format(col))
                 self.tableWidget_path.setItem(i, j, item)
 
                 if j in [1, 2]:
@@ -281,7 +288,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if self.avoidance_enabled():
             if dest_sys_name in self.avoidance_list():
-                self._path_message("Destination in avoidance list, dummy ;)", error=True)
+                self._path_message("Destination in avoidance list, dummy ;)", MainWindow.MSG_ERROR)
+                self.tableWidget_path.setRowCount(0)
                 return
 
         if source_sys_name and dest_sys_name:
@@ -293,14 +301,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if route:
                 route_length = len(route)
                 if route_length == 1:
-                    self._path_message("Set the same source and destination :P", error=False)
+                    self._path_message("Set the same source and destination :P", MainWindow.MSG_OK)
                 else:
-                    self._path_message("Total number of jumps: {}".format(route_length - 1), error=False)
+                    self._path_message("Total number of jumps: {}".format(route_length - 1), MainWindow.MSG_OK)
 
                 self.add_data_to_table(route)
             else:
                 self.tableWidget_path.setRowCount(0)
-                self._path_message("No path found between the solar systems.", error=True)
+                self._path_message("No path found between the solar systems.", MainWindow.MSG_ERROR)
         else:
             self.tableWidget_path.setRowCount(0)
             error_msg = []
@@ -309,7 +317,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if not dest_sys_name:
                 error_msg.append("destination")
             error_msg = "Invalid system name in {}.".format(" and ".join(error_msg))
-            self._path_message(error_msg, error=True)
+            self._path_message(error_msg, MainWindow.MSG_ERROR)
 
     @staticmethod
     def banner_double_click(event):
@@ -325,9 +333,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             time.sleep(0.01)
 
         if connections > 0:
-            self._trip_message("Retrieved {} connections!".format(connections), error=0)
+            self._trip_message("Retrieved {} connections!".format(connections), MainWindow.MSG_OK)
         else:
-            self._trip_message("Error. Check url/user/pass.", error=1)
+            self._trip_message("Error. Check url/user/pass.", MainWindow.MSG_ERROR)
 
         self.pushButton_trip_get.setEnabled(True)
         self.pushButton_find_path.setEnabled(True)
@@ -361,7 +369,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.pushButton_find_path.setEnabled(False)
             self.worker_thread.start()
         else:
-            self._trip_message("Error! Process already running", error=1)
+            self._trip_message("Error! Process already running", MainWindow.MSG_ERROR)
 
     @QtCore.Slot()
     def btn_avoid_add_clicked(self):
@@ -379,6 +387,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.Slot()
     def btn_set_dest_clicked(self):
         pass
+
+    @QtCore.Slot()
+    def btn_reset_clicked(self):
+        msg_box = QtGui.QMessageBox()
+        msg_box.setWindowTitle("Reset chain")
+        msg_box.setText("Are you sure you want to clear all Tripwire data?")
+        msg_box.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        msg_box.setDefaultButton(QtGui.QMessageBox.No)
+        ret = msg_box.exec_()
+
+        if ret == QtGui.QMessageBox.Yes:
+            self.nav.reset_chain()
+            self._trip_message("Not connected to Tripwire, yet", MainWindow.MSG_INFO)
 
     @QtCore.Slot()
     def line_edit_avoid_name_return(self):

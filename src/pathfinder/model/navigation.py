@@ -1,6 +1,7 @@
 # navigation.py
 
 from evedb import EveDb
+from solarmap import SolarMap
 from tripwire import Tripwire
 
 
@@ -28,6 +29,21 @@ class Navigation:
         trip = Tripwire(self.trip_user, self.trip_pass, self.trip_url)
         return trip.augment_map(solar_map)
 
+    @staticmethod
+    def _get_instructions(weight):
+        if weight:
+            if weight[0] == SolarMap.GATE:
+                instructions = "Jump gate"
+            elif weight[0] == SolarMap.WORMHOLE:
+                [wh_sig, wh_code] = weight[1]
+                instructions = "Jump wormhole {}[{}]".format(wh_sig, wh_code)
+            else:
+                instructions = "Instructions unclear, initiate self-destruct"
+        else:
+            instructions = "Destination reached"
+
+        return instructions
+
     def route(self, source, destination, avoidance_list):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
@@ -46,7 +62,7 @@ class Navigation:
             else:
                 weight = None
             system_description = list(self.eve_db.system_desc[x])
-            system_description.append(weight)
+            system_description.append(Navigation._get_instructions(weight))
             route.append(system_description)
 
         return route

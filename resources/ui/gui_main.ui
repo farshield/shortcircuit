@@ -505,29 +505,16 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
                <widget class="QPushButton" name="pushButton_avoid_delete">
                 <property name="text">
-                 <string>Delete</string>
+                 <string>Delete selected</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButton_avoid_clear">
                 <property name="text">
-                 <string>Clear all</string>
+                 <string>Clear list</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../resources.qrc">
@@ -538,6 +525,13 @@
              </layout>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_reset">
+           <property name="text">
+            <string>Reset chain</string>
+           </property>
           </widget>
          </item>
         </layout>

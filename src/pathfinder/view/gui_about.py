@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_about.ui'
 #
-# Created: Fri Feb 26 10:00:56 2016
+# Created: Sat Feb 27 12:24:13 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -94,7 +94,7 @@ class Ui_AboutDialog(object):
         AboutDialog.setWindowTitle(QtGui.QApplication.translate("AboutDialog", "About Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
         self.label_title.setText(QtGui.QApplication.translate("AboutDialog", "Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Pathfinder is open-source application able to find the shortest path between any systems using EvE solar map data and Tripwire. Pathfinder can run on all platforms where Python and PySide are supported.</p><p align=\"justify\">Credits:</p><p align=\"justify\">- Daimian Mercer (Author of Tripwire)</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Developer: Valtyr Farshield", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Developer:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_o7.setText(QtGui.QApplication.translate("AboutDialog", "Fly safe o7", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc

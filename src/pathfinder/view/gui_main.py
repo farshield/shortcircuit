@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Fri Feb 26 10:00:55 2016
+# Created: Sat Feb 27 12:24:11 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -255,8 +255,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.listWidget_avoid)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
         self.pushButton_avoid_delete = QtGui.QPushButton(self.groupBox_avoidance)
         self.pushButton_avoid_delete.setObjectName("pushButton_avoid_delete")
         self.horizontalLayout_3.addWidget(self.pushButton_avoid_delete)
@@ -268,6 +266,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.pushButton_avoid_clear)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.verticalLayout_3.addWidget(self.groupBox_avoidance)
+        self.pushButton_reset = QtGui.QPushButton(self.groupBox__options)
+        self.pushButton_reset.setObjectName("pushButton_reset")
+        self.verticalLayout_3.addWidget(self.pushButton_reset)
         self.horizontalLayout.addWidget(self.groupBox__options)
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -308,7 +309,8 @@ class Ui_MainWindow(object):
         self.label_avoid_status.setText(QtGui.QApplication.translate("MainWindow", "Addition status", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "System:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_avoid_add.setText(QtGui.QApplication.translate("MainWindow", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_avoid_delete.setText(QtGui.QApplication.translate("MainWindow", "Delete", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_avoid_clear.setText(QtGui.QApplication.translate("MainWindow", "Clear all", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_avoid_delete.setText(QtGui.QApplication.translate("MainWindow", "Delete selected", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_avoid_clear.setText(QtGui.QApplication.translate("MainWindow", "Clear list", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_reset.setText(QtGui.QApplication.translate("MainWindow", "Reset chain", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
