@@ -287,6 +287,11 @@ class AuthedConnection(EVE):
             self.refresh()
         return super(self.__class__, self).get(resource, params)
 
+    def post(self, resource, data, params=None):
+        if int(time.time()) >= self.expires:
+            self.refresh()
+        return self._session.post(resource, data=data, params=params)
+
 
 class APIObject(object):
     def __init__(self, parent, connection):

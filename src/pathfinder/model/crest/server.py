@@ -30,7 +30,7 @@ class AuthHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 # http://code.activestate.com/recipes/425210-simple-stoppable-server-using-socket-timeout/
 class StoppableHTTPServer(BaseHTTPServer.HTTPServer):
 
-    WAIT_TIMEOUT = 60
+    WAIT_TIMEOUT = 120
 
     def server_bind(self):
         BaseHTTPServer.HTTPServer.server_bind(self)

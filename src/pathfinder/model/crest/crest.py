@@ -1,10 +1,12 @@
 # evecrest.py
 
 import time
+import json
 import logging
 import threading
 import uuid
 import pycrest
+from pycrest.errors import APIException
 from server import StoppableHTTPServer, AuthHandler
 
 
@@ -12,13 +14,18 @@ class Crest:
     """
     CREST
     """
-    def __init__(self):
+    def __init__(self, login_callback):
+        self.login_callback = login_callback
         self.httpd = None
         self.state = None
         self.client_id = "0428d86e5a03494ea5f6124ecb01995d"
         self.api_key = "rdQ21g0F4M1WJYEklJ1UscK1P2dDXsgUhhZattfX"
         self.client_callback = "http://127.0.0.1:7444"
         self.scopes = ['characterLocationRead', 'characterNavigationWrite']
+
+        self.con = None
+        self.char_id = None
+        self.char_name = None
 
         self.eve = pycrest.EVE(
             client_id=self.client_id,
@@ -54,20 +61,61 @@ class Crest:
                 return
 
         if 'code' in message:
-            # eve = copy.deepcopy(self.eve)
-            con = self.eve.authorize(message['code'][0])
+            self.con = self.eve.authorize(message['code'][0])
             self.eve()
-            whoami = con.whoami()
-            print whoami
+            whoami = self.con.whoami()
+            self.char_id = whoami['CharacterID']
+            self.char_name = whoami['CharacterName']
+            self.login_callback(self.char_name)
 
         self.stop_server()
 
+    def get_char_location(self):
+        current_location = None
+        if self.con:
+            uri = '{}characters/{}/location/'.format(self.eve._authed_endpoint, self.char_id)
+            try:
+                current_location = self.con.get(uri)['solarSystem']['name']
+            except (KeyError, TypeError, APIException):
+                pass
+        return current_location
+
+    def set_char_destination(self, sys_id):
+        success = False
+        if self.con:
+            solar_system = 'https://crest-tq.eveonline.com/solarsystems/{}/'.format(sys_id)
+            uri = '{}characters/{}/navigation/waypoints/'.format(self.eve._authed_endpoint, self.char_id)
+            post_data = json.dumps(
+                {
+                    'solarSystem': {'href': solar_system, 'id': sys_id},
+                    'first': True,
+                    'clearOtherWaypoints': False
+                }
+            )
+            result = self.con.post(uri, data=post_data)
+            if result.status_code == 200:
+                success = True
+        return success
+
+    def logout(self):
+        self.con = None
+        self.char_id = None
+        self.char_name = None
+
+
+def login_cb(char_name):
+    print "Welcome, {}".format(char_name)
+
 
 def main():
-    crest = Crest()
+    import code
+
+    crest = Crest(login_cb)
     print crest.start_server()
-    raw_input("Press <RETURN> to stop server\n")
-    crest.stop_server()
+    gvars = globals().copy()
+    gvars.update(locals())
+    shell = code.InteractiveConsole(gvars)
+    shell.interact()
 
 if __name__ == "__main__":
     main()
