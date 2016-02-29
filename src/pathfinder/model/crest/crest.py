@@ -37,10 +37,12 @@ class Crest:
     def start_server(self):
         if self.httpd:
             self.stop_server()
-            time.sleep(1)
+            time.sleep(0.1)
         logging.debug("Starting server")
         self.httpd = StoppableHTTPServer(('127.0.0.1', 7444), AuthHandler)
-        threading.Thread(target=self.httpd.serve, args=(self.handle_login, )).start()
+        server_thread = threading.Thread(target=self.httpd.serve, args=(self.handle_login, ))
+        server_thread.setDaemon(True)
+        server_thread.start()
 
         self.state = str(uuid.uuid4())
         return self.eve.auth_uri(scopes=self.scopes, state=self.state)

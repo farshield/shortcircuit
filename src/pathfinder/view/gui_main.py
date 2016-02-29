@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Sat Feb 27 18:40:48 2016
+# Created: Mon Feb 29 19:34:53 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.groupBox__options)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.pushButton_eve_login = QtGui.QPushButton(self.groupBox__options)
-        self.pushButton_eve_login.setEnabled(False)
+        self.pushButton_eve_login.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

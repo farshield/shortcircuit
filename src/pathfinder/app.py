@@ -12,6 +12,7 @@ from view.gui_about import Ui_AboutDialog
 from model.navigation import Navigation
 from model.navprocessor import NavProcessor
 from model.evedb import EveDb
+from model.crestprocessor import CrestProcessor
 
 
 def dict_from_csvqfile(file_path):
@@ -96,6 +97,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Additional GUI setup
         self.additional_gui_setup()
+        self.label_status_bar = QtGui.QLabel("Not connected to EvE")
+        self.statusBar().addWidget(self.label_status_bar, 1)
 
         # Thread initial config
         self.worker_thread = QtCore.QThread()
@@ -104,6 +107,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.nav_processor.finished.connect(self.thread_done)
         # noinspection PyUnresolvedReferences
         self.worker_thread.started.connect(self.nav_processor.process)
+
+        # CREST
+        self.eve_connected = False
+        self.crestp = CrestProcessor()
+        self.crestp.login_response.connect(self.login_handler)
+        self.crestp.location_response.connect(self.location_handler)
+        self.crestp.destination_response.connect(self.destination_handler)
 
     def additional_gui_setup(self):
         # Additional GUI setup
@@ -134,6 +144,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
 
         # Signals
+        # noinspection PyUnresolvedReferences
+        self.pushButton_eve_login.clicked.connect(self.btn_eve_login_clicked)
+        # noinspection PyUnresolvedReferences
+        self.pushButton_player_location.clicked.connect(self.btn_player_location_clicked)
         # noinspection PyUnresolvedReferences
         self.pushButton_find_path.clicked.connect(self.btn_find_path_clicked)
         # noinspection PyUnresolvedReferences
@@ -265,6 +279,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _trip_message(self, message, message_type):
         MainWindow._label_message(self.label_trip_status, message, message_type)
 
+    def _statusbar_message(self, message, message_type):
+        MainWindow._label_message(self.label_status_bar, message, message_type)
+
     def avoidance_enabled(self):
         return self.checkBox_avoid_enabled.isChecked()
 
@@ -386,6 +403,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         event.accept()
         AboutDialog(__author__, __version__).exec_()
 
+    @QtCore.Slot(str)
+    def login_handler(self, char_name):
+        if char_name:
+            self._statusbar_message("Welcome, {}".format(char_name), MainWindow.MSG_OK)
+            self.pushButton_eve_login.setText("Logout")
+            self.pushButton_player_location.setEnabled(True)
+            self.pushButton_set_dest.setEnabled(True)
+            self.eve_connected = True
+        else:
+            self._statusbar_message("Error: Unable to connect with CREST", MainWindow.MSG_ERROR)
+
+    @QtCore.Slot(str)
+    def location_handler(self, location):
+        self.pushButton_player_location.setEnabled(True)
+        self.lineEdit_source.setText(location)
+
+    @QtCore.Slot(bool)
+    def destination_handler(self, response):
+        pass
+
     @QtCore.Slot(int)
     def thread_done(self, connections):
         self.worker_thread.quit()
@@ -401,6 +438,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.pushButton_trip_get.setEnabled(True)
         self.pushButton_find_path.setEnabled(True)
+
+    @QtCore.Slot()
+    def btn_eve_login_clicked(self):
+        if not self.eve_connected:
+            url = self.crestp.login()
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(url, QtCore.QUrl.TolerantMode))
+        else:
+            self.crestp.logout()
+            self._statusbar_message("Not connected to EvE", MainWindow.MSG_INFO)
+            self.pushButton_eve_login.setText("Log in with EvE")
+            self.pushButton_player_location.setEnabled(False)
+            self.pushButton_set_dest.setEnabled(False)
+            self.eve_connected = False
+
+    @QtCore.Slot()
+    def btn_player_location_clicked(self):
+        self.pushButton_player_location.setEnabled(False)
+        self.crestp.get_location()
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):
@@ -434,6 +489,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._trip_message("Error! Process already running", MainWindow.MSG_ERROR)
 
     @QtCore.Slot()
+    def btn_set_dest_clicked(self):
+        pass
+
+    @QtCore.Slot()
     def btn_avoid_add_clicked(self):
         self.avoid_system()
 
@@ -445,10 +504,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.Slot()
     def btn_avoid_clear_clicked(self):
         self.listWidget_avoid.clear()
-
-    @QtCore.Slot()
-    def btn_set_dest_clicked(self):
-        pass
 
     @QtCore.Slot()
     def btn_reset_clicked(self):
