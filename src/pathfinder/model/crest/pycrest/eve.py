@@ -3,10 +3,10 @@ import base64
 import requests
 import time
 import zlib
-from pycrest import version
-from pycrest.compat import bytes_, text_
-from pycrest.errors import APIException
-from pycrest.weak_ciphers import WeakCiphersAdapter
+from . import version
+from compat import bytes_, text_
+from errors import APIException
+from weak_ciphers import WeakCiphersAdapter
 
 try:
     from urllib.parse import urlparse, urlunparse, parse_qsl
@@ -107,8 +107,10 @@ class APIConnection(object):
             "Accept": "application/json",
         })
         session.headers.update(additional_headers)
-        session.mount('https://public-crest.eveonline.com',
-                WeakCiphersAdapter())
+        session.mount(
+            'https://public-crest.eveonline.com',
+            WeakCiphersAdapter()
+        )
         self._session = session
         if cache:
             if isinstance(cache, APICache):
