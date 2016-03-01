@@ -32,5 +32,14 @@ class CrestProcessor(QtCore.QObject):
         location = self.crest.get_char_location()
         self.location_response.emit(location)
 
+    def set_destination(self, sys_id):
+        server_thread = threading.Thread(target=self._set_destination, args=(sys_id, ))
+        server_thread.setDaemon(True)
+        server_thread.start()
+
+    def _set_destination(self, sys_id):
+        response = self.crest.set_char_destination(sys_id)
+        self.destination_response.emit(response)
+
     def _login_callback(self, char_name):
         self.login_response.emit(char_name)

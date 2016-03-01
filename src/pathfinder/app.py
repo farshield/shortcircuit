@@ -421,7 +421,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot(bool)
     def destination_handler(self, response):
-        pass
+        if not response:
+            msg_box = QtGui.QMessageBox(self)
+            msg_box.setWindowTitle("Player destination")
+            msg_box.setText("CREST error when trying to set destination")
+            msg_box.exec_()
+        self.pushButton_set_dest.setEnabled(True)
 
     @QtCore.Slot(int)
     def thread_done(self, connections):
@@ -443,7 +448,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def btn_eve_login_clicked(self):
         if not self.eve_connected:
             url = self.crestp.login()
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(url, QtCore.QUrl.TolerantMode))
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromEncoded(url))
         else:
             self.crestp.logout()
             self._statusbar_message("Not connected to EvE", MainWindow.MSG_INFO)
@@ -456,6 +461,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def btn_player_location_clicked(self):
         self.pushButton_player_location.setEnabled(False)
         self.crestp.get_location()
+
+    @QtCore.Slot()
+    def btn_set_dest_clicked(self):
+        dest_sys_name = self.nav.eve_db.normalize_name(
+            self.lineEdit_set_dest.text().strip()
+        )
+        sys_id = self.nav.eve_db.name2id(dest_sys_name)
+        if sys_id:
+            self.pushButton_set_dest.setEnabled(False)
+            self.crestp.set_destination(sys_id)
+        else:
+            if self.lineEdit_set_dest.text().strip() == "":
+                msg_txt = "No system name give as input"
+            else:
+                msg_txt = "Invalid system name: '{}'".format(self.lineEdit_set_dest.text())
+            msg_box = QtGui.QMessageBox(self)
+            msg_box.setWindowTitle("Player destination")
+            msg_box.setText(msg_txt)
+            msg_box.exec_()
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):
@@ -489,10 +513,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self._trip_message("Error! Process already running", MainWindow.MSG_ERROR)
 
     @QtCore.Slot()
-    def btn_set_dest_clicked(self):
-        pass
-
-    @QtCore.Slot()
     def btn_avoid_add_clicked(self):
         self.avoid_system()
 
@@ -507,7 +527,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot()
     def btn_reset_clicked(self):
-        msg_box = QtGui.QMessageBox()
+        msg_box = QtGui.QMessageBox(self)
         msg_box.setWindowTitle("Reset chain")
         msg_box.setText("Are you sure you want to clear all Tripwire data?")
         msg_box.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
