@@ -8,7 +8,7 @@ import threading
 import logging
 
 
-# https://github.com/fuzzysteve/CREST-Market-Downloader/
+# Reference: https://github.com/fuzzysteve/CREST-Market-Downloader/
 class AuthHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/favicon.ico":
@@ -27,10 +27,14 @@ class AuthHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return
 
 
-# http://code.activestate.com/recipes/425210-simple-stoppable-server-using-socket-timeout/
+# Reference: http://code.activestate.com/recipes/425210-simple-stoppable-server-using-socket-timeout/
 class StoppableHTTPServer(BaseHTTPServer.HTTPServer):
 
-    WAIT_TIMEOUT = 120
+    WAIT_TIMEOUT = 90
+
+    def __init__(self, server_address, RequestHandlerClass, timeout_callback=None):
+        BaseHTTPServer.HTTPServer.__init__(self, server_address, RequestHandlerClass)
+        self.timeout_callback = timeout_callback
 
     def server_bind(self):
         BaseHTTPServer.HTTPServer.server_bind(self)
@@ -58,6 +62,8 @@ class StoppableHTTPServer(BaseHTTPServer.HTTPServer):
     def handle_timeout(self):
         self.tries += 1
         if self.tries == self.max_tries:
+            if self.timeout_callback:
+                self.timeout_callback()
             logging.debug("Server timed out waiting for connection")
             self.stop()
 

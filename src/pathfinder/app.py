@@ -186,7 +186,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if win_state:
             self.restoreState(win_state)
 
-
         # Tripwire info
         self.tripwire_url = self.settings.value("tripwire_url", "https://tripwire.eve-apps.com")
         self.tripwire_user = self.settings.value("tripwire_user", "username")
@@ -482,10 +481,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     msg_txt = "No system name give as input"
                 else:
                     msg_txt = "Invalid system name: '{}'".format(self.lineEdit_set_dest.text())
-                msg_box = QtGui.QMessageBox(self)
-                msg_box.setWindowTitle("Player destination")
-                msg_box.setText(msg_txt)
-                msg_box.exec_()
+                self._message_box("Player destination", msg_txt)
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):

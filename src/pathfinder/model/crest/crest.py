@@ -35,17 +35,26 @@ class Crest:
         )
 
     def start_server(self):
-        if self.httpd:
-            self.stop_server()
-            time.sleep(0.1)
-        logging.debug("Starting server")
-        self.httpd = StoppableHTTPServer(('127.0.0.1', 7444), AuthHandler)
-        server_thread = threading.Thread(target=self.httpd.serve, args=(self.handle_login, ))
-        server_thread.setDaemon(True)
-        server_thread.start()
+        if not self.httpd:
+            # Server not running - restart it
+            logging.debug("Starting server")
+            self.httpd = StoppableHTTPServer(
+                server_address=('127.0.0.1', 7444),
+                RequestHandlerClass=AuthHandler,
+                timeout_callback=self.timeout_server
+            )
+            server_thread = threading.Thread(target=self.httpd.serve, args=(self.handle_login, ))
+            server_thread.setDaemon(True)
+            server_thread.start()
+            self.state = str(uuid.uuid4())
+        else:
+            # Server already running - reset timeout counter
+            self.httpd.tries = 0
 
-        self.state = str(uuid.uuid4())
         return self.eve.auth_uri(scopes=self.scopes, state=self.state)
+
+    def timeout_server(self):
+        self.httpd = None
 
     def stop_server(self):
         logging.debug("Stopping server")
