@@ -95,6 +95,9 @@ class DictCache(APICache):
 
 
 class APIConnection(object):
+
+    TIMEOUT = 3
+
     def __init__(self, additional_headers=None, user_agent=None, cache_dir=None, cache=None):
         # Set up a Requests Session
         session = requests.Session()
@@ -154,8 +157,8 @@ class APIConnection(object):
 
         logger.debug('Getting resource %s (params=%s)', resource, prms)
         try:
-            res = self._session.get(resource, params=prms, timeout=3)
-        except requests.exceptions.ReadTimeout:
+            res = self._session.get(resource, params=prms, timeout=APIConnection.TIMEOUT)
+        except requests.exceptions.RequestException:
             raise APIException("No response from server")
 
         if res.status_code != 200:
@@ -170,6 +173,17 @@ class APIConnection(object):
             self.cache.put(key, {'expires': time.time() + expires, 'payload': ret})
 
         return ret
+
+    def post(self, resource, data, params=None):
+        try:
+            res = self._session.post(resource, data=data, params=params, timeout=APIConnection.TIMEOUT)
+        except requests.exceptions.RequestException:
+            raise APIException("No response from server")
+
+        if res.status_code != 200:
+            raise APIException("Got unexpected status code from server: %i" % res.status_code)
+
+        return res
 
     def _get_expires(self, response):
         if 'Cache-Control' not in response.headers:
@@ -223,7 +237,15 @@ class EVE(APIConnection):
     def _authorize(self, params):
         auth = text_(base64.b64encode(bytes_("%s:%s" % (self.client_id, self.api_key))))
         headers = {"Authorization": "Basic %s" % auth}
-        res = self._session.post("%s/token" % self._oauth_endpoint, params=params, headers=headers)
+        try:
+            res = self._session.post(
+                "%s/token" % self._oauth_endpoint,
+                params=params,
+                headers=headers,
+                timeout=APIConnection.TIMEOUT
+            )
+        except requests.exceptions.RequestException:
+            raise APIException("No response from server")
         if res.status_code != 200:
             raise APIException("Got unexpected status code from API: %i" % res.status_code)
         return res.json()
@@ -296,7 +318,7 @@ class AuthedConnection(EVE):
     def post(self, resource, data, params=None):
         if int(time.time()) >= self.expires:
             self.refresh()
-        return self._session.post(resource, data=data, params=params)
+        return super(self.__class__, self).post(resource, data, params)
 
 
 class APIObject(object):

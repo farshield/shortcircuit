@@ -56,19 +56,23 @@ class Crest:
     def handle_login(self, message):
         if not message:
             return
-
         if 'state' in message:
             if message['state'][0] != self.state:
                 logging.warning("OAUTH state mismatch")
                 return
 
         if 'code' in message:
-            self.con = self.eve.authorize(message['code'][0])
-            self.eve()
-            whoami = self.con.whoami()
-            self.char_id = whoami['CharacterID']
-            self.char_name = whoami['CharacterName']
-            self.login_callback(self.char_name)
+            try:
+                self.con = self.eve.authorize(message['code'][0])
+                self.eve()
+                whoami = self.con.whoami()
+                self.char_id = whoami['CharacterID']
+                self.char_name = whoami['CharacterName']
+            except APIException:
+                self.char_id = None
+                self.char_name = None
+            finally:
+                self.login_callback(self.char_name)
 
         self.stop_server()
 
@@ -90,12 +94,15 @@ class Crest:
             post_data = json.dumps(
                 {
                     'solarSystem': {'href': solar_system, 'id': sys_id},
-                    'first': True,
-                    'clearOtherWaypoints': False
+                    'first': False,
+                    'clearOtherWaypoints': True
                 }
             )
-            result = self.con.post(uri, data=post_data)
-            if result.status_code == 200:
+            try:
+                self.con.post(uri, data=post_data)
+            except APIException:
+                pass
+            else:
                 success = True
         return success
 

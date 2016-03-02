@@ -171,21 +171,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # noinspection PyUnresolvedReferences
         self.lineEdit_avoid_name.returnPressed.connect(self.line_edit_avoid_name_return)
         # noinspection PyUnresolvedReferences
+        self.lineEdit_set_dest.returnPressed.connect(self.btn_set_dest_clicked)
+        # noinspection PyUnresolvedReferences
         self.tableWidget_path.itemSelectionChanged.connect(self.table_item_selection_changed)
 
     def read_settings(self):
         self.settings.beginGroup("MainWindow")
 
         # Window state
-        win_pos = self.settings.value("win_pos")
-        if win_pos:
-            self.move(win_pos)
-        win_size = self.settings.value("win_size")
-        if win_size:
-            self.resize(win_size)
-        is_maximized = True if self.settings.value("win_maximized", "false") == "true" else False
-        if is_maximized:
-            self.showMaximized()
+        win_geometry = self.settings.value("win_geometry")
+        if win_geometry:
+            self.restoreGeometry(win_geometry)
+        win_state = self.settings.value("win_state")
+        if win_state:
+            self.restoreState(win_state)
+
 
         # Tripwire info
         self.tripwire_url = self.settings.value("tripwire_url", "https://tripwire.eve-apps.com")
@@ -220,9 +220,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.settings.beginGroup("MainWindow")
 
         # Window state
-        self.settings.setValue("win_pos", self.pos())
-        self.settings.setValue("win_size", self.size())
-        self.settings.setValue("win_maximized", self.isMaximized())
+        self.settings.setValue("win_geometry", self.saveGeometry())
+        self.settings.setValue("win_state", self.saveState())
 
         # Tripwire info
         self.settings.setValue("tripwire_url", self.tripwire_url)
@@ -259,6 +258,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         self.settings.endGroup()
+
+    def _message_box(self, title, text):
+        msg_box = QtGui.QMessageBox(self)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(text)
+        return msg_box.exec_()
 
     @staticmethod
     def _label_message(label, message, message_type):
@@ -416,16 +421,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot(str)
     def location_handler(self, location):
+        if location:
+            self.lineEdit_source.setText(location)
+        else:
+            self._message_box("Player destination", "Unable to get location (character not online or CREST error)")
         self.pushButton_player_location.setEnabled(True)
-        self.lineEdit_source.setText(location)
 
     @QtCore.Slot(bool)
     def destination_handler(self, response):
         if not response:
-            msg_box = QtGui.QMessageBox(self)
-            msg_box.setWindowTitle("Player destination")
-            msg_box.setText("CREST error when trying to set destination")
-            msg_box.exec_()
+            self._message_box("Player destination", "CREST error when trying to set destination")
         self.pushButton_set_dest.setEnabled(True)
 
     @QtCore.Slot(int)
@@ -464,22 +469,23 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot()
     def btn_set_dest_clicked(self):
-        dest_sys_name = self.nav.eve_db.normalize_name(
-            self.lineEdit_set_dest.text().strip()
-        )
-        sys_id = self.nav.eve_db.name2id(dest_sys_name)
-        if sys_id:
-            self.pushButton_set_dest.setEnabled(False)
-            self.crestp.set_destination(sys_id)
-        else:
-            if self.lineEdit_set_dest.text().strip() == "":
-                msg_txt = "No system name give as input"
+        if self.pushButton_set_dest.isEnabled():
+            dest_sys_name = self.nav.eve_db.normalize_name(
+                self.lineEdit_set_dest.text().strip()
+            )
+            sys_id = self.nav.eve_db.name2id(dest_sys_name)
+            if sys_id:
+                self.pushButton_set_dest.setEnabled(False)
+                self.crestp.set_destination(sys_id)
             else:
-                msg_txt = "Invalid system name: '{}'".format(self.lineEdit_set_dest.text())
-            msg_box = QtGui.QMessageBox(self)
-            msg_box.setWindowTitle("Player destination")
-            msg_box.setText(msg_txt)
-            msg_box.exec_()
+                if self.lineEdit_set_dest.text().strip() == "":
+                    msg_txt = "No system name give as input"
+                else:
+                    msg_txt = "Invalid system name: '{}'".format(self.lineEdit_set_dest.text())
+                msg_box = QtGui.QMessageBox(self)
+                msg_box.setWindowTitle("Player destination")
+                msg_box.setText(msg_txt)
+                msg_box.exec_()
 
     @QtCore.Slot()
     def btn_find_path_clicked(self):
