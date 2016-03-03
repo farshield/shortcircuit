@@ -7,6 +7,7 @@ import StringIO
 from . import __appname__, __version__, __author__, __organization__
 from PySide import QtGui, QtCore
 from view.gui_main import Ui_MainWindow
+from view.gui_crest import Ui_CrestDialog
 from view.gui_tripwire import Ui_TripwireDialog
 from view.gui_about import Ui_AboutDialog
 from model.navigation import Navigation
@@ -25,6 +26,40 @@ def dict_from_csvqfile(file_path):
         reader = csv.reader(f, delimiter=';')
 
     return reader
+
+
+class CrestDialog(QtGui.QDialog, Ui_CrestDialog):
+    """
+    CREST Configuration Window
+    """
+    def __init__(self, implicit, client_id, client_secret, parent=None):
+        super(CrestDialog, self).__init__(parent)
+        self.setupUi(self)
+        # noinspection PyUnresolvedReferences
+        self.radioButton_implicit.toggled.connect(self.stuff)
+        if implicit:
+            self.radioButton_implicit.setChecked(True)
+        else:
+            self.radioButton_user.setChecked(True)
+        self.lineEdit_client_id.setText(client_id)
+        self.lineEdit_client_secret.setText(client_secret)
+        self._credentials_enable(not self.radioButton_implicit.isChecked())
+
+    def _credentials_enable(self, state):
+        if state:
+            self.lineEdit_client_id.setEnabled(True)
+            self.lineEdit_client_id.setReadOnly(False)
+            self.lineEdit_client_secret.setEnabled(True)
+            self.lineEdit_client_secret.setReadOnly(False)
+        else:
+            self.lineEdit_client_id.setEnabled(False)
+            self.lineEdit_client_id.setReadOnly(True)
+            self.lineEdit_client_secret.setEnabled(False)
+            self.lineEdit_client_secret.setReadOnly(True)
+
+    @QtCore.Slot()
+    def stuff(self):
+        self._credentials_enable(not self.radioButton_implicit.isChecked())
 
 
 class TripwireDialog(QtGui.QDialog, Ui_TripwireDialog):
@@ -72,9 +107,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         self.scene_banner = None
-        self.tripwire_url = "https://tripwire.eve-apps.com"
-        self.tripwire_user = "username"
-        self.tripwire_pass = "password"
+        self.tripwire_url = None
+        self.tripwire_user = None
+        self.tripwire_pass = None
+        self.crest_implicit = None
+        self.crest_client_id = None
+        self.crest_client_secret = None
 
         # Read stored settings
         self.read_settings()
@@ -110,11 +148,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # CREST
         self.eve_connected = False
-        self.crestp = CrestProcessor()
+        self.crestp = CrestProcessor(
+            implicit=self.crest_implicit,
+            client_id=self.crest_client_id,
+            client_secret=self.crest_client_secret,
+        )
         self.crestp.login_response.connect(self.login_handler)
         self.crestp.location_response.connect(self.location_handler)
         self.crestp.destination_response.connect(self.destination_handler)
 
+    # noinspection PyUnresolvedReferences
     def additional_gui_setup(self):
         # Additional GUI setup
         self.graphicsView_banner.mouseDoubleClickEvent = MainWindow.banner_double_click
@@ -144,35 +187,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
 
         # Signals
-        # noinspection PyUnresolvedReferences
         self.pushButton_eve_login.clicked.connect(self.btn_eve_login_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_player_location.clicked.connect(self.btn_player_location_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_find_path.clicked.connect(self.btn_find_path_clicked)
-        # noinspection PyUnresolvedReferences
+        self.pushButton_crest_config.clicked.connect(self.btn_crest_config_clicked)
         self.pushButton_trip_config.clicked.connect(self.btn_trip_config_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_trip_get.clicked.connect(self.btn_trip_get_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_avoid_add.clicked.connect(self.btn_avoid_add_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_avoid_delete.clicked.connect(self.btn_avoid_delete_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_avoid_clear.clicked.connect(self.btn_avoid_clear_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_set_dest.clicked.connect(self.btn_set_dest_clicked)
-        # noinspection PyUnresolvedReferences
         self.pushButton_reset.clicked.connect(self.btn_reset_clicked)
-        # noinspection PyUnresolvedReferences
         self.lineEdit_source.returnPressed.connect(self.line_edit_source_return)
-        # noinspection PyUnresolvedReferences
         self.lineEdit_destination.returnPressed.connect(self.line_edit_destination_return)
-        # noinspection PyUnresolvedReferences
         self.lineEdit_avoid_name.returnPressed.connect(self.line_edit_avoid_name_return)
-        # noinspection PyUnresolvedReferences
         self.lineEdit_set_dest.returnPressed.connect(self.btn_set_dest_clicked)
-        # noinspection PyUnresolvedReferences
         self.tableWidget_path.itemSelectionChanged.connect(self.table_item_selection_changed)
 
     def read_settings(self):
@@ -185,6 +214,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         win_state = self.settings.value("win_state")
         if win_state:
             self.restoreState(win_state)
+
+        # CREST info
+        self.crest_implicit = True if self.settings.value("crest_implicit", "true") == "true" else False
+        self.crest_client_id = self.settings.value("crest_client_id", "")
+        self.crest_client_secret = self.settings.value("crest_client_secret", "")
 
         # Tripwire info
         self.tripwire_url = self.settings.value("tripwire_url", "https://tripwire.eve-apps.com")
@@ -221,6 +255,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # Window state
         self.settings.setValue("win_geometry", self.saveGeometry())
         self.settings.setValue("win_state", self.saveState())
+
+        # Crest info
+        self.settings.setValue("crest_implicit", self.crest_implicit)
+        self.settings.setValue("crest_client_id", self.crest_client_id)
+        self.settings.setValue("crest_client_secret", self.crest_client_secret)
 
         # Tripwire info
         self.settings.setValue("tripwire_url", self.tripwire_url)
@@ -488,13 +527,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.find_path()
 
     @QtCore.Slot()
-    def btn_trip_config_clicked(self):
-        tripwire_dialog = TripwireDialog(
-            self.tripwire_url,
-            self.tripwire_user,
-            self.tripwire_pass
-        )
+    def btn_crest_config_clicked(self):
+        crest_dialog = CrestDialog(self.crest_implicit, self.crest_client_id, self.crest_client_secret)
+        if crest_dialog.exec_():
+            self.crest_implicit = crest_dialog.radioButton_implicit.isChecked()
+            self.crest_client_id = crest_dialog.lineEdit_client_id.text()
+            self.crest_client_secret = crest_dialog.lineEdit_client_secret.text()
+            self.crestp.crest.update_credentials(
+                self.crest_implicit,
+                self.crest_client_id,
+                self.crest_client_secret,
+            )
 
+    @QtCore.Slot()
+    def btn_trip_config_clicked(self):
+        tripwire_dialog = TripwireDialog(self.tripwire_url, self.tripwire_user, self.tripwire_pass)
         if tripwire_dialog.exec_():
             self.tripwire_url = tripwire_dialog.lineEdit_url.text()
             self.tripwire_user = tripwire_dialog.lineEdit_user.text()

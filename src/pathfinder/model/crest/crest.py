@@ -14,22 +14,26 @@ class Crest:
     """
     CREST
     """
-    def __init__(self, login_callback):
+    def __init__(self, implicit, client_id, client_secret, login_callback):
         self.login_callback = login_callback
         self.httpd = None
         self.state = None
-        self.client_id = "0428d86e5a03494ea5f6124ecb01995d"
-        self.api_key = "rdQ21g0F4M1WJYEklJ1UscK1P2dDXsgUhhZattfX"
         self.client_callback = "http://127.0.0.1:7444"
         self.scopes = ['characterLocationRead', 'characterNavigationWrite']
 
+        self.eve = None
         self.con = None
         self.char_id = None
         self.char_name = None
 
+        self.update_credentials(implicit, client_id, client_secret)
+
+    def update_credentials(self, implicit, client_id, client_secret):
+        client_id = client_id.encode('ascii', 'ignore')
+        client_secret = client_secret.encode('ascii', 'ignore')
         self.eve = pycrest.EVE(
-            client_id=self.client_id,
-            api_key=self.api_key,
+            client_id=client_id,
+            api_key=client_secret,
             redirect_uri=self.client_callback,
             testing=False
         )
@@ -128,7 +132,11 @@ def login_cb(char_name):
 def main():
     import code
 
-    crest = Crest(login_cb)
+    implicit = True
+    client_id = ""
+    client_secret = ""
+
+    crest = Crest(implicit, client_id, client_secret, login_cb)
     print crest.start_server()
     gvars = globals().copy()
     gvars.update(locals())

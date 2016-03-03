@@ -13,9 +13,9 @@ class CrestProcessor(QtCore.QObject):
     location_response = QtCore.Signal(str)
     destination_response = QtCore.Signal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, implicit, client_id, client_secret, parent=None):
         super(CrestProcessor, self).__init__(parent)
-        self.crest = Crest(self._login_callback)
+        self.crest = Crest(implicit, client_id, client_secret, self._login_callback)
 
     def login(self):
         return self.crest.start_server()
