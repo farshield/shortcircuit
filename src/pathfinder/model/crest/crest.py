@@ -1,6 +1,5 @@
 # evecrest.py
 
-import time
 import json
 import logging
 import threading
@@ -14,8 +13,12 @@ class Crest:
     """
     CREST
     """
-    def __init__(self, implicit, client_id, client_secret, login_callback):
+
+    SERVER_CLIENT_ID = "2e96395f553b463b97f9a663c1dd9f81"
+
+    def __init__(self, implicit, client_id, client_secret, login_callback, logout_callback):
         self.login_callback = login_callback
+        self.logout_callback = logout_callback
         self.httpd = None
         self.state = None
         self.client_callback = "http://127.0.0.1:7444"
@@ -25,18 +28,27 @@ class Crest:
         self.con = None
         self.char_id = None
         self.char_name = None
+        self.sso_timer = None
 
         self.update_credentials(implicit, client_id, client_secret)
 
     def update_credentials(self, implicit, client_id, client_secret):
         client_id = client_id.encode('ascii', 'ignore')
         client_secret = client_secret.encode('ascii', 'ignore')
-        self.eve = pycrest.EVE(
-            client_id=client_id,
-            api_key=client_secret,
-            redirect_uri=self.client_callback,
-            testing=False
-        )
+        if implicit:
+            self.eve = pycrest.EVE(
+                client_id=Crest.SERVER_CLIENT_ID,
+                api_key=None,
+                redirect_uri=self.client_callback,
+                testing=False
+            )
+        else:
+            self.eve = pycrest.EVE(
+                client_id=client_id,
+                api_key=client_secret,
+                redirect_uri=self.client_callback,
+                testing=False
+            )
 
     def start_server(self):
         if not self.httpd:
@@ -86,6 +98,25 @@ class Crest:
                 self.char_name = None
             finally:
                 self.login_callback(self.char_name)
+        elif 'access_token' in message:
+            try:
+                self.con = self.eve.temptoken_authorize(
+                    access_token=message['access_token'][0],
+                    expires_in=int(message['expires_in'][0])
+                )
+                self.eve()
+                whoami = self.con.whoami()
+                self.char_id = whoami['CharacterID']
+                self.char_name = whoami['CharacterName']
+            except APIException:
+                self.char_id = None
+                self.char_name = None
+            else:
+                self.sso_timer = threading.Timer(int(message['expires_in'][0]), self._logout)
+                self.sso_timer.setDaemon(True)
+                self.sso_timer.start()
+            finally:
+                self.login_callback(self.char_name)
 
         self.stop_server()
 
@@ -120,13 +151,23 @@ class Crest:
         return success
 
     def logout(self):
+        if self.sso_timer:
+            self.sso_timer.cancel()
+        self._logout()
+
+    def _logout(self):
         self.con = None
         self.char_id = None
         self.char_name = None
+        self.logout_callback()
 
 
 def login_cb(char_name):
     print "Welcome, {}".format(char_name)
+
+
+def logout_cb():
+    print "Session expired"
 
 
 def main():
@@ -136,7 +177,7 @@ def main():
     client_id = ""
     client_secret = ""
 
-    crest = Crest(implicit, client_id, client_secret, login_cb)
+    crest = Crest(implicit, client_id, client_secret, login_cb, logout_cb)
     print crest.start_server()
     gvars = globals().copy()
     gvars.update(locals())

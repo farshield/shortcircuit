@@ -154,6 +154,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             client_secret=self.crest_client_secret,
         )
         self.crestp.login_response.connect(self.login_handler)
+        self.crestp.logout_response.connect(self.logout_handler)
         self.crestp.location_response.connect(self.location_handler)
         self.crestp.destination_response.connect(self.destination_handler)
 
@@ -457,6 +458,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self._statusbar_message("Error: Unable to connect with CREST", MainWindow.MSG_ERROR)
 
+    @QtCore.Slot()
+    def logout_handler(self):
+        self._statusbar_message("Not connected to EvE", MainWindow.MSG_INFO)
+        self.pushButton_eve_login.setText("Log in with EvE")
+        self.pushButton_player_location.setEnabled(False)
+        self.pushButton_set_dest.setEnabled(False)
+        self.eve_connected = False
+
     @QtCore.Slot(str)
     def location_handler(self, location):
         if location:
@@ -494,11 +503,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromEncoded(url))
         else:
             self.crestp.logout()
-            self._statusbar_message("Not connected to EvE", MainWindow.MSG_INFO)
-            self.pushButton_eve_login.setText("Log in with EvE")
-            self.pushButton_player_location.setEnabled(False)
-            self.pushButton_set_dest.setEnabled(False)
-            self.eve_connected = False
 
     @QtCore.Slot()
     def btn_player_location_clicked(self):

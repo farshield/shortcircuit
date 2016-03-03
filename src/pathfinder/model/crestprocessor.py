@@ -10,12 +10,13 @@ class CrestProcessor(QtCore.QObject):
     CREST Middle-ware
     """
     login_response = QtCore.Signal(str)
+    logout_response = QtCore.Signal()
     location_response = QtCore.Signal(str)
     destination_response = QtCore.Signal(bool)
 
     def __init__(self, implicit, client_id, client_secret, parent=None):
         super(CrestProcessor, self).__init__(parent)
-        self.crest = Crest(implicit, client_id, client_secret, self._login_callback)
+        self.crest = Crest(implicit, client_id, client_secret, self._login_callback, self._logout_callback)
 
     def login(self):
         return self.crest.start_server()
@@ -43,3 +44,6 @@ class CrestProcessor(QtCore.QObject):
 
     def _login_callback(self, char_name):
         self.login_response.emit(char_name)
+
+    def _logout_callback(self):
+        self.logout_response.emit()
