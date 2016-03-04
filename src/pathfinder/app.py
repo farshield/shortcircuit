@@ -82,7 +82,7 @@ class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
         self.label_title.setText("Pathfinder {}".format(version))
-        self.label_author.setText("Developer: {}".format(author))
+        self.label_author.setText("Creator: {}".format(author))
         # noinspection PyUnresolvedReferences
         self.pushButton_o7.clicked.connect(self.close)
 

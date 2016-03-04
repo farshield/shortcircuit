@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_tripwire.ui'
 #
-# Created: Thu Mar 03 13:00:32 2016
+# Created: Fri Mar 04 13:43:01 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,9 @@ class Ui_TripwireDialog(object):
         TripwireDialog.setSizePolicy(sizePolicy)
         TripwireDialog.setMinimumSize(QtCore.QSize(400, 255))
         TripwireDialog.setMaximumSize(QtCore.QSize(400, 255))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        TripwireDialog.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/images/app_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         TripwireDialog.setWindowIcon(icon)

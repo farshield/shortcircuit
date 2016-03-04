@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_about.ui'
 #
-# Created: Thu Mar 03 13:00:33 2016
+# Created: Fri Mar 04 13:43:02 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,9 @@ class Ui_AboutDialog(object):
         AboutDialog.setSizePolicy(sizePolicy)
         AboutDialog.setMinimumSize(QtCore.QSize(400, 260))
         AboutDialog.setMaximumSize(QtCore.QSize(400, 260))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        AboutDialog.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/images/app_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         AboutDialog.setWindowIcon(icon)
@@ -65,6 +68,7 @@ class Ui_AboutDialog(object):
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
         self.label_2 = QtGui.QLabel(AboutDialog)
+        self.label_2.setStyleSheet("")
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
@@ -93,8 +97,8 @@ class Ui_AboutDialog(object):
     def retranslateUi(self, AboutDialog):
         AboutDialog.setWindowTitle(QtGui.QApplication.translate("AboutDialog", "About Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
         self.label_title.setText(QtGui.QApplication.translate("AboutDialog", "Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Pathfinder is open-source application able to find the shortest path between any systems using EvE solar map data and Tripwire. Pathfinder can run on all platforms where Python and PySide are supported.</p><p align=\"justify\">Credits:</p><p align=\"justify\">- Daimian Mercer (Author of Tripwire)</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Developer:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Pathfinder is open-source application able to find the shortest path between solar systems (wormholes included) using the Eve SDE and wormhole mapping tools such as Tripwire. Pathfinder can run on all platforms where Python and PySide are supported.</p><p><span style=\" font-weight:600;\">Credits</span>: Daimian Mercer (Tripwire), Dreae (PyCrest), pyfa-org (PyFa)</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Creator:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_o7.setText(QtGui.QApplication.translate("AboutDialog", "Fly safe o7", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc

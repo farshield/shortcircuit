@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_crest.ui'
 #
-# Created: Thu Mar 03 13:00:33 2016
+# Created: Fri Mar 04 13:43:03 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,6 +15,9 @@ class Ui_CrestDialog(object):
         CrestDialog.resize(400, 320)
         CrestDialog.setMinimumSize(QtCore.QSize(400, 320))
         CrestDialog.setMaximumSize(QtCore.QSize(400, 320))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        CrestDialog.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/images/app_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         CrestDialog.setWindowIcon(icon)
