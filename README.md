@@ -26,7 +26,7 @@ Binaries (executables) can be downloaded from [here](https://github.com/farshiel
 ![Screenshot](http://i.imgur.com/ltjEsyW.png)
 
 ## Video
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Pathfinder video" width="360" height="270" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Pathfinder video" width="480" height="360" border="10" /></a>
 
 ## How it works
 Pathfinder reconstructs its own version of the Eve solar map from the 'mapSolarSystemJumps' table of the Static Data Export database. After that, the solar map can be extended by retrieving connections from popular 3rd party wormhole mapping tools. The JSON response from [Tripwire](https://tripwire.eve-apps.com/) is processed and the connections are added to the existing solar map. Graph algorithms will compute the shortest path taking certain things into account like avoidance list and wormhole size restrictions.
@@ -51,7 +51,11 @@ mass: "Stable"
 ```
 
 ## Future development
-
+1. Take into account wormhole creation/stable time
+2. Add support for more 3rd party wormhole mapping tools
+3. Combine data from multiple sources (multiple Tripwire accounts, etc.)
+4. Improve the searching algorithm and offer the possibility to prioritize certain security values (ex. avoid low-sec/null-sec if possible)
+5. Suggestions?
 
 ## Contacts
 For any questions please contact Valtyr Farshield. Thank you :)
