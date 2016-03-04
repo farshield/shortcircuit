@@ -1,11 +1,57 @@
 # server.py
 
-import os
 import BaseHTTPServer
 import urlparse
 import socket
 import threading
 import logging
+
+
+HTML = '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Pathfinder Local Server</title>
+    <style type="text/css">
+        body { text-align: center; padding: 150px; }
+        h1 { font-size: 40px; }
+        body { font: 20px Helvetica, sans-serif; color: #333; }
+        #article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+        a { color: #dc8100; text-decoration: none; }
+        a:hover { color: #333; text-decoration: none; }
+    </style>
+</head>
+
+<body>
+
+<div id="article">
+    <h1>Pathfinder</h1>
+    <div>
+        <p>If you see this message then it means you should be logged in with CREST. You may close this window and return to the application.</p>
+    </div>
+</div>
+<script type="text/javascript">
+function extractFromHash(name, hash) {
+    var match = hash.match(new RegExp(name + "=([^&]+)"));
+    return !!match && match[1];
+}
+
+var hash = window.location.hash;
+var token = extractFromHash("access_token", hash);
+
+if (token){
+    var redirect = window.location.origin.concat('/?', window.location.hash.substr(1));
+    window.location = redirect;
+}
+else {
+    console.log("do nothing");
+}
+</script>
+</body>
+</html>
+'''
 
 
 # Reference: https://github.com/fuzzysteve/CREST-Market-Downloader/
@@ -17,10 +63,7 @@ class AuthHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         parts = urlparse.parse_qs(parsed_path.query)
         self.send_response(200)
         self.end_headers()
-        script_dir = os.path.dirname(__file__)
-        file_path = os.path.join(script_dir, 'server.html')
-        with open(file_path) as html_file:
-            self.wfile.write(html_file.read())
+        self.wfile.write(HTML)
         self.server.callback(parts)
 
     def log_message(self, format, *args):
