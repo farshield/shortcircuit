@@ -87,9 +87,9 @@ class Tripwire:
                         # Determine wormhole size
                         size_result1 = self.eve_db.get_whsize_by_code(code_source)
                         size_result2 = self.eve_db.get_whsize_by_code(code_dest)
-                        if size_result1:
+                        if size_result1 in [0, 1, 2, 3]:
                             wh_size = size_result1
-                        elif size_result2:
+                        elif size_result2 in [0, 1, 2, 3]:
                             wh_size = size_result2
                         else:
                             # Wormhole codes are unknown => determine size based on class of wormholes
