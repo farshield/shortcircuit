@@ -3,7 +3,8 @@
 ## Description
 Pathfinder is a desktop application which is able to find the shortest path between solar systems (including wormholes) using data retrieved from Eve SDE and 3rd party wormhole mapping tools. The application is able to run on all systems where Python and PySide (PyQt) are supported.
 
-Features:
+**Features:**
+
 1. Ability to add wormhole connections from [Tripwire](https://tripwire.eve-apps.com/)
 2. CREST authentication for reading the player location and setting the destination in-game
 3. Avoidance list
