@@ -362,15 +362,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.tableWidget_path.item(i, j).setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
                 if row[1] == "HS":
-                    color = QtGui.QColor(124, 225, 181)
+                    color = QtGui.QColor(223, 240, 216)
                 elif row[1] == "LS":
-                    color = QtGui.QColor(199, 218, 126)
+                    color = QtGui.QColor(252, 248, 227)
                 elif row[1] == "NS":
-                    color = QtGui.QColor(243, 157, 157)
+                    color = QtGui.QColor(242, 222, 222)
                 else:
-                    color = QtGui.QColor(155, 185, 236)
+                    color = QtGui.QColor(210, 226, 242)
 
                 self.tableWidget_path.item(i, j).setBackground(color)
+                self.tableWidget_path.item(i, j).setForeground(QtGui.QColor(0, 0, 0))
 
     def get_restrictions(self):
         restrictions = []
@@ -603,10 +604,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def line_edit_destination_return(self):
         self.find_path()
 
+    def _table_style(self, red_value, green_value, blue_value):
+        self.tableWidget_path.setStyleSheet(
+            "selection-color: black; selection-background-color: rgb({}, {}, {});".format(
+                red_value,
+                green_value,
+                blue_value,
+            )
+        )
+
     @QtCore.Slot()
     def table_item_selection_changed(self):
         selection = self.tableWidget_path.selectedItems()
         if selection:
+            sys_class = selection[1].text()
+            if sys_class == "HS":
+                self._table_style(193, 210, 186)
+            elif sys_class == "LS":
+                self._table_style(222, 218, 197)
+            elif sys_class == "NS":
+                self._table_style(212, 192, 192)
+            else:
+                self._table_style(180, 196, 212)
+
             self.lineEdit_set_dest.setText(selection[0].text())
 
     # event: QCloseEvent
