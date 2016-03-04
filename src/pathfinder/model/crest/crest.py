@@ -14,7 +14,7 @@ class Crest:
     CREST
     """
 
-    SERVER_CLIENT_ID = "2e96395f553b463b97f9a663c1dd9f81"
+    SERVER_CLIENT_ID = "866fe9e6ac8a4e15ad41b9816d5de11e"
 
     def __init__(self, implicit, client_id, client_secret, login_callback, logout_callback):
         self.login_callback = login_callback
