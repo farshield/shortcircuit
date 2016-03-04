@@ -22,6 +22,9 @@ $ python main.py
 ## Releases
 Binaries (executables) can be downloaded from [here](https://github.com/farshield/pathfinder/releases)
 
+## About CREST
+Pathfinder uses almost the same CREST model as PyFa. You can find more about it [here](https://github.com/pyfa-org/Pyfa/wiki/CREST). If you don't want to use the "implicit" mode, you can create your own keys at this [location](https://developers.eveonline.com/applications). Application form should look something like [this](http://i.imgur.com/qhIPG6r.png). Of course you can give it a different name and description, but you have to type in the correct callback URL `http://127.0.0.1:7444` and select the correct scopes (`characterLocationRead` and `characterNavigationWrite`).
+
 ## Screenshot
 ![Screenshot](http://i.imgur.com/ltjEsyW.png)
 
