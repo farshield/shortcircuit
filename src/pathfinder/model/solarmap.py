@@ -1,5 +1,6 @@
 # solarmap.py
 
+import sqlite3
 import collections
 
 
@@ -51,6 +52,31 @@ class SolarMap:
 
     def get_all_systems(self):
         return self.systems_list.keys()
+
+    def gephi_database(self):
+        data_to_insert = []
+        with sqlite3.connect('solar_map_graph.db') as graph_db:
+            cursor = graph_db.cursor()
+            cursor.execute("DROP TABLE IF EXISTS edges")
+            graph_db.commit()
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS edges
+                (Source INTEGER,
+                Target INTEGER,
+                Connection TEXT)
+                """
+            )
+            for key, value in self.systems_list.iteritems():
+                for neighbor in value.get_connections():
+                    connection_type = "gate" if value.connected_to[neighbor][0] == 0 else "wormhole"
+                    data_to_insert.append((key, neighbor.id, connection_type))
+            cursor.executemany(
+                """
+                INSERT INTO edges ('source', 'target', 'connection')
+                VALUES (?, ?, ?)
+                """, data_to_insert
+            )
 
     def add_connection(
             self,

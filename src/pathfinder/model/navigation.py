@@ -11,6 +11,7 @@ class Navigation:
     """
     def __init__(self, gates, system_desc, wh_codes, trip_url, trip_user, trip_pass):
         self.eve_db = EveDb(gates, system_desc, wh_codes)
+        self.eve_db.gephi_database()
         self.solar_map = self.eve_db.get_solar_map()
         self.trip_url = None
         self.trip_user = None

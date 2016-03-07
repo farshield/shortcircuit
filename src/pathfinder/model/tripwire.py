@@ -102,6 +102,7 @@ class Tripwire:
                             SolarMap.WORMHOLE,
                             [sig_source, code_source, sig_dest, code_dest, wh_size],
                         )
+            solar_map.gephi_database()
 
         return connections
 

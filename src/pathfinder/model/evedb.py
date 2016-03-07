@@ -1,5 +1,6 @@
 # evedb.py
 
+import sqlite3
 from solarmap import SolarMap
 
 
@@ -30,6 +31,34 @@ class EveDb:
         self.gates = gates
         self.system_desc = system_desc
         self.wh_codes = wh_codes
+
+    def gephi_database(self):
+        data_to_insert = []
+        with sqlite3.connect('solar_map_graph.db') as graph_db:
+            cursor = graph_db.cursor()
+            cursor.execute("DROP TABLE IF EXISTS nodes")
+            graph_db.commit()
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS nodes
+                (Id INTEGER PRIMARY KEY,
+                Label TEXT,
+                Class TEXT)
+                """
+            )
+            for key, value in self.system_desc.iteritems():
+                sys_class = value[1]
+                if sys_class in ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18']:
+                    sys_class = "WH"
+                if sys_class == "Unknown":
+                    sys_class = "NS"
+                data_to_insert.append((key, value[0], sys_class))
+            cursor.executemany(
+                """
+                INSERT INTO nodes ('id', 'label', 'class')
+                VALUES (?, ?, ?)
+                """, data_to_insert
+            )
 
     def get_whsize_by_code(self, code):
         whsize = None

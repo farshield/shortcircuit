@@ -62,6 +62,7 @@ target/
 .ipynb_checkpoints
 
 # Custom
+src/solar_map_graph.db
 venv/
 .idea/
 resources/database/universeDataDx.db
