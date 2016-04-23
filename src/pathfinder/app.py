@@ -138,6 +138,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.label_status_bar = QtGui.QLabel("Not connected to EvE")
         self.statusBar().addWidget(self.label_status_bar, 1)
 
+        # Icons
+        self.icon_wormhole = QtGui.QIcon(":images/app_icon_small.png")
+
         # Thread initial config
         self.worker_thread = QtCore.QThread()
         self.nav_processor = NavProcessor(self.nav)
@@ -370,6 +373,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 else:
                     color = QtGui.QColor(210, 226, 242)
 
+                if j == 3 and "wormhole" in col:
+                    self.tableWidget_path.item(i, j).setIcon(self.icon_wormhole)
                 self.tableWidget_path.item(i, j).setBackground(color)
                 self.tableWidget_path.item(i, j).setForeground(QtGui.QColor(0, 0, 0))
 
