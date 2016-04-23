@@ -114,6 +114,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.crest_client_id = None
         self.crest_client_secret = None
 
+        # Table configuration
+        self.tableWidget_path.setColumnCount(5)
+        self.tableWidget_path.setHorizontalHeaderLabels(
+            ["System name", "Class", "Security", "Instructions", "Additional information"]
+        )
+        self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
+
         # Read stored settings
         self.read_settings()
 
@@ -185,13 +192,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
             line_edit_field.setCompleter(completer)
 
-        # Table configuration
-        self.tableWidget_path.setColumnCount(5)
-        self.tableWidget_path.setHorizontalHeaderLabels(
-            ["System name", "Class", "Security", "Instructions", "Additional information"]
-        )
-        self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
-
         # Signals
         self.pushButton_eve_login.clicked.connect(self.btn_eve_login_clicked)
         self.pushButton_player_location.clicked.connect(self.btn_player_location_clicked)
@@ -220,6 +220,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         win_state = self.settings.value("win_state")
         if win_state:
             self.restoreState(win_state)
+        for col_idx, column_width in enumerate(self.settings.value("table_widths", "110,75,75,180").split(',')):
+            self.tableWidget_path.setColumnWidth(col_idx, int(column_width))
 
         # CREST info
         self.crest_implicit = True if self.settings.value("crest_implicit", "true") == "true" else False
@@ -261,6 +263,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # Window state
         self.settings.setValue("win_geometry", self.saveGeometry())
         self.settings.setValue("win_state", self.saveState())
+        self.settings.setValue("table_widths", ",".join([
+            str(self.tableWidget_path.columnWidth(0)),
+            str(self.tableWidget_path.columnWidth(1)),
+            str(self.tableWidget_path.columnWidth(2)),
+            str(self.tableWidget_path.columnWidth(3)),
+        ]))
 
         # Crest info
         self.settings.setValue("crest_implicit", self.crest_implicit)

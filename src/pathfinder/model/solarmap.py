@@ -68,14 +68,14 @@ class SolarMap:
             self.systems_list[source].add_neighbor(self.systems_list[destination], [SolarMap.GATE, None])
             self.systems_list[destination].add_neighbor(self.systems_list[source], [SolarMap.GATE, None])
         elif con_type == SolarMap.WORMHOLE:
-            [sig_source, code_source, sig_dest, code_dest, wh_size] = con_info
+            [sig_source, code_source, sig_dest, code_dest, wh_size, wh_life, wh_mass, time_elapsed] = con_info
             self.systems_list[source].add_neighbor(
                 self.systems_list[destination],
-                [SolarMap.WORMHOLE, [sig_source, code_source, wh_size]]
+                [SolarMap.WORMHOLE, [sig_source, code_source, wh_size, wh_life, wh_mass, time_elapsed]]
             )
             self.systems_list[destination].add_neighbor(
                 self.systems_list[source],
-                [SolarMap.WORMHOLE, [sig_dest, code_dest, wh_size]]
+                [SolarMap.WORMHOLE, [sig_dest, code_dest, wh_size, wh_life, wh_mass, time_elapsed]]
             )
         else:
             # you shouldn't be here

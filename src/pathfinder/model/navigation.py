@@ -35,7 +35,7 @@ class Navigation:
             if weight[0] == SolarMap.GATE:
                 instructions = "Jump gate"
             elif weight[0] == SolarMap.WORMHOLE:
-                [wh_sig, wh_code, _] = weight[1]
+                [wh_sig, wh_code, _, _, _, _] = weight[1]
                 instructions = "Jump wormhole {}[{}]".format(wh_sig, wh_code)
             else:
                 instructions = "Instructions unclear, initiate self-destruct"
@@ -49,22 +49,42 @@ class Navigation:
         info = ""
         if weight and weight_back:
             if weight_back[0] == SolarMap.WORMHOLE:
-                [wh_sig, wh_code, wh_size] = weight_back[1]
-                # Return signature
-                info += "Return sig: {}[{}]".format(wh_sig, wh_code)
-
+                [wh_sig, wh_code, wh_size, wh_life, wh_mass, time_elapsed] = weight_back[1]
                 # Wormhole size
-                info += ", Size: "
                 if wh_size == 0:
-                    info += "Small"
+                    wh_size_text = "Small"
                 elif wh_size == 1:
-                    info += "Medium"
+                    wh_size_text = "Medium"
                 elif wh_size == 2:
-                    info += "Large"
+                    wh_size_text = "Large"
                 elif wh_size == 3:
-                    info += "X-large"
+                    wh_size_text = "X-large"
                 else:
-                    info += "Unknown"
+                    wh_size_text = "Unknown"
+
+                # Wormhole life
+                if wh_life == 1:
+                    wh_life_text = "Stable"
+                else:
+                    wh_life_text = "Critical"
+
+                # Wormhole mass
+                if wh_mass == 2:
+                    wh_mass_text = "Stable"
+                elif wh_mass == 1:
+                    wh_mass_text = "Destab"
+                else:
+                    wh_mass_text = "Critical"
+
+                # Return signature
+                info = "Return sig: {}[{}], Size: {}, Life: {}, Mass: {}, Updated: {}h ago".format(
+                    wh_sig,
+                    wh_code,
+                    wh_size_text,
+                    wh_life_text,
+                    wh_mass_text,
+                    time_elapsed
+                )
 
         return info
 
@@ -110,7 +130,7 @@ class Navigation:
                     if prev_gate:
                         if prev_gate != path[idx - 1]:
                             short_format += "...-->"
-                    [wh_sig, _, _] = weight[1]
+                    [wh_sig, _, _, _, _, _] = weight[1]
                     short_format += system_description[0] + "[{}]~~>".format(wh_sig)
                     prev_gate = None
                 elif weight[0] == SolarMap.GATE:
