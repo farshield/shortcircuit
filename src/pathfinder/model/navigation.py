@@ -44,6 +44,30 @@ class Navigation:
 
         return instructions
 
+    @staticmethod
+    def _get_additional_info(weight, weight_back):
+        info = ""
+        if weight and weight_back:
+            if weight_back[0] == SolarMap.WORMHOLE:
+                [wh_sig, wh_code, wh_size] = weight_back[1]
+                # Return signature
+                info += "Return sig: {}[{}]".format(wh_sig, wh_code)
+
+                # Wormhole size
+                info += ", Size: "
+                if wh_size == 0:
+                    info += "Small"
+                elif wh_size == 1:
+                    info += "Medium"
+                elif wh_size == 2:
+                    info += "Large"
+                elif wh_size == 3:
+                    info += "X-large"
+                else:
+                    info += "Unknown"
+
+        return info
+
     def route(self, source, destination, avoidance_list, size_restriction):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
@@ -64,13 +88,16 @@ class Navigation:
                 source = self.solar_map.get_system(x)
                 dest = self.solar_map.get_system(path[idx + 1])
                 weight = source.get_weight(dest)
+                weight_back = dest.get_weight(source)
             else:
                 weight = None
+                weight_back = None
             system_description = list(self.eve_db.system_desc[x])
             system_description.append(Navigation._get_instructions(weight))
+            system_description.append(Navigation._get_additional_info(weight, weight_back))
             route.append(system_description)
 
-            # Build short format message (traveling between multiple consecutive gates will be denoted as '...')
+            # Build short format message (travelling between multiple consecutive gates will be denoted as '...')
             if not weight:
                 # destination reached
                 if prev_gate:

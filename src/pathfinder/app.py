@@ -186,8 +186,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             line_edit_field.setCompleter(completer)
 
         # Table configuration
-        self.tableWidget_path.setColumnCount(4)
-        self.tableWidget_path.setHorizontalHeaderLabels(["System name", "Class", "Security", "Instructions"])
+        self.tableWidget_path.setColumnCount(5)
+        self.tableWidget_path.setHorizontalHeaderLabels(
+            ["System name", "Class", "Security", "Instructions", "Additional information"]
+        )
         self.tableWidget_path.horizontalHeader().setStretchLastSection(True)
 
         # Signals
