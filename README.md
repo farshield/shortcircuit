@@ -8,7 +8,7 @@ Pathfinder is a desktop application which is able to find the shortest path betw
 1. Ability to add wormhole connections from [Tripwire](https://tripwire.eve-apps.com/)
 2. CREST authentication for reading the player location and setting the destination in-game
 3. Avoidance list
-4. Wormhole size restrictions
+4. Wormhole restrictions for: size, life, mass, last updated
 5. Instructions specify the signature and type of the wormhole (makes navigation easier)
 6. One-line output which can be copy-pasted for those lazy fleet members
 
@@ -19,6 +19,11 @@ $ cd src
 $ python main.py
 ```
 
+Some users reported having troubles when installing PySide on Linux/Mac. Try using your built-in package manager. Example for debian-based systems:
+```bash
+$ sudo apt-get install python-pyside
+```
+
 ## Releases
 Binaries (executables) can be downloaded from [here](https://github.com/farshield/pathfinder/releases)
 
@@ -26,7 +31,7 @@ Binaries (executables) can be downloaded from [here](https://github.com/farshiel
 Pathfinder uses almost the same CREST model as PyFa. You can find more about it [here](https://github.com/pyfa-org/Pyfa/wiki/CREST). If you don't want to use the "implicit" mode, you can create your own keys at this [location](https://developers.eveonline.com/applications). Application form should look something like [this](http://i.imgur.com/qhIPG6r.png). Of course you can give it a different name and description, but you have to type in the correct callback URL `http://127.0.0.1:7444` and select the correct scopes (`characterLocationRead` and `characterNavigationWrite`).
 
 ## Screenshot
-![Screenshot](http://i.imgur.com/ltjEsyW.png)
+![Screenshot](http://i.imgur.com/Uuq0RI6.png)
 
 ## Video
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Pathfinder video" width="480" height="360" border="10" /></a>
@@ -54,11 +59,10 @@ mass: "Stable"
 ```
 
 ## Future development
-1. Take into account wormhole creation/stable time
+1. Improve the searching algorithm and offer the possibility to prioritize certain security values (ex. avoid low-sec/null-sec if possible)
 2. Add support for more 3rd party wormhole mapping tools
 3. Combine data from multiple sources (multiple Tripwire accounts, etc.)
-4. Improve the searching algorithm and offer the possibility to prioritize certain security values (ex. avoid low-sec/null-sec if possible)
-5. Suggestions?
+4. Suggestions?
 
 ## Contacts
-For any questions please contact Valtyr Farshield. Thank you :)
+For any questions please contact Valtyr Farshield. Contract me some Quafe. Thank you :)

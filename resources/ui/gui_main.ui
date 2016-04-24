@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>700</height>
+    <height>727</height>
    </rect>
   </property>
   <property name="font">
@@ -365,63 +365,104 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QGridLayout" name="gridLayout_2">
-              <item row="1" column="0">
-               <widget class="QCheckBox" name="checkBox_whsize_small">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>Small</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
+                 <string>Wormhole size at least:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QCheckBox" name="checkBox_whsize_medium">
-                <property name="enabled">
-                 <bool>true</bool>
+              <item>
+               <widget class="QComboBox" name="comboBox_size">
+                <item>
+                 <property name="text">
+                  <string>Small [All]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Medium</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Large</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>X-Large</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>[Ignore wormholes]</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_eol">
+              <property name="text">
+               <string>Ignore end of life wormholes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_masscrit">
+              <property name="text">
+               <string>Ignore critical mass wormholes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_ignore_old">
+              <property name="text">
+               <string>Ignore wormholes updated more than</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="text">
-                 <string>Medium</string>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_hours">
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>48.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+                <property name="value">
+                 <double>16.000000000000000</double>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QCheckBox" name="checkBox_whsize_xl">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="text">
-                 <string>Very large</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QCheckBox" name="checkBox_whsize_large">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="text">
-                 <string>Large</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="2">
+              <item>
                <widget class="QLabel" name="label_4">
                 <property name="text">
-                 <string>Wormhole size:</string>
+                 <string>hours ago</string>
                 </property>
                </widget>
               </item>

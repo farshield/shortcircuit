@@ -87,7 +87,16 @@ class SolarMap:
     def __iter__(self):
         return iter(self.systems_list.values())
 
-    def shortest_path(self, source, destination, avoidance_list, size_restriction):
+    def shortest_path(
+            self,
+            source,
+            destination,
+            avoidance_list,
+            size_restriction,
+            ignore_eol,
+            ignore_masscrit,
+            age_threshold
+    ):
         path = []
         size_restriction = set(size_restriction)
 
@@ -127,10 +136,15 @@ class SolarMap:
                             if con_type == SolarMap.GATE:
                                 proceed = True
                             elif con_type == SolarMap.WORMHOLE:
-                                wh_size = con_info[2]
-                                if wh_size in size_restriction:
-                                    proceed = True
-                                else:
+                                [_, _, wh_size, wh_life, wh_mass, time_elapsed] = con_info
+                                proceed = True
+                                if wh_size not in size_restriction:
+                                    proceed = False
+                                if ignore_eol and wh_life == 0:
+                                    proceed = False
+                                if ignore_masscrit and wh_mass == 0:
+                                    proceed = False
+                                if 0 < age_threshold < time_elapsed:
                                     proceed = False
                             else:
                                 proceed = False

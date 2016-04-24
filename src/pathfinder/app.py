@@ -242,17 +242,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._avoid_system_name(sys_name)
 
         # Restrictions
-        self.checkBox_whsize_small.setChecked(
-            True if self.settings.value("restriction_whsize_small", "true") == "true" else False
+        self.comboBox_size.setCurrentIndex(
+            int(self.settings.value("restrictions_whsize", "0"))
         )
-        self.checkBox_whsize_medium.setChecked(
-            True if self.settings.value("restriction_whsize_medium", "true") == "true" else False
+        self.checkBox_eol.setChecked(
+            True if self.settings.value("restriction_eol", "false") == "true" else False
         )
-        self.checkBox_whsize_large.setChecked(
-            True if self.settings.value("restriction_whsize_large", "true") == "true" else False
+        self.checkBox_masscrit.setChecked(
+            True if self.settings.value("restriction_masscrit", "false") == "true" else False
         )
-        self.checkBox_whsize_xl.setChecked(
-            True if self.settings.value("restriction_whsize_xl", "true") == "true" else False
+        self.checkBox_ignore_old.setChecked(
+            True if self.settings.value("restriction_ignore_old", "false") == "true" else False
+        )
+        self.doubleSpinBox_hours.setValue(
+            float(self.settings.value("restriction_hours", "16.0"))
         )
 
         self.settings.endGroup()
@@ -293,20 +296,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # Restrictions
         self.settings.setValue(
-            "restriction_whsize_small",
-            self.checkBox_whsize_small.isChecked()
+            "restrictions_whsize",
+            self.comboBox_size.currentIndex()
         )
         self.settings.setValue(
-            "restriction_whsize_medium",
-            self.checkBox_whsize_medium.isChecked()
+            "restriction_eol",
+            self.checkBox_eol.isChecked()
         )
         self.settings.setValue(
-            "restriction_whsize_large",
-            self.checkBox_whsize_large.isChecked()
+            "restriction_masscrit",
+            self.checkBox_masscrit.isChecked()
         )
         self.settings.setValue(
-            "restriction_whsize_xl",
-            self.checkBox_whsize_xl.isChecked()
+            "restriction_ignore_old",
+            self.checkBox_ignore_old.isChecked()
+        )
+        self.settings.setValue(
+            "restriction_hours",
+            self.doubleSpinBox_hours.value()
         )
 
         self.settings.endGroup()
@@ -389,18 +396,26 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tableWidget_path.item(i, j).setForeground(QtGui.QColor(0, 0, 0))
 
     def get_restrictions(self):
-        restrictions = []
+        size_restriction = []
 
-        if self.checkBox_whsize_small.isChecked():
-            restrictions.append(EveDb.WHSIZE_S)
-        if self.checkBox_whsize_medium.isChecked():
-            restrictions.append(EveDb.WHSIZE_M)
-        if self.checkBox_whsize_large.isChecked():
-            restrictions.append(EveDb.WHSIZE_L)
-        if self.checkBox_whsize_xl.isChecked():
-            restrictions.append(EveDb.WHSIZE_XL)
+        combo_index = self.comboBox_size.currentIndex()
+        if combo_index < 1:
+            size_restriction.append(EveDb.WHSIZE_S)
+        if combo_index < 2:
+            size_restriction.append(EveDb.WHSIZE_M)
+        if combo_index < 3:
+            size_restriction.append(EveDb.WHSIZE_L)
+        if combo_index < 4:
+            size_restriction.append(EveDb.WHSIZE_XL)
 
-        return restrictions
+        ignore_eol = self.checkBox_eol.isChecked()
+        ignore_masscrit = self.checkBox_masscrit.isChecked()
+        if self.checkBox_ignore_old.isChecked():
+            age_threshold = self.doubleSpinBox_hours.value()
+        else:
+            age_threshold = 0
+
+        return [size_restriction, ignore_eol, ignore_masscrit, age_threshold]
 
     def _clear_results(self):
         self.tableWidget_path.setRowCount(0)
@@ -420,20 +435,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._clear_results()
                 return
 
+        [size_restriction, ignore_eol, ignore_masscrit, age_threshold] = self.get_restrictions()
         if source_sys_name and dest_sys_name:
             if self.avoidance_enabled():
                 [route, short_format] = self.nav.route(
                     source_sys_name,
                     dest_sys_name,
                     self.avoidance_list(),
-                    self.get_restrictions()
+                    size_restriction,
+                    ignore_eol,
+                    ignore_masscrit,
+                    age_threshold
                 )
             else:
                 [route, short_format] = self.nav.route(
                     source_sys_name,
                     dest_sys_name,
                     [],
-                    self.get_restrictions()
+                    size_restriction,
+                    ignore_eol,
+                    ignore_masscrit,
+                    age_threshold
                 )
 
             if route:
