@@ -12,6 +12,7 @@ class Tripwire:
     """
     Tripwire handler
     """
+    USER_AGENT = "Pathfinder v0.1.1"
 
     def __init__(self, eve_db, username, password, url):
         self.eve_db = eve_db
@@ -30,12 +31,16 @@ class Tripwire:
             "username": self.username,
             "password": self.password
         }
+        headers = {
+            "Referer": login_url,
+            "User-Agent": Tripwire.USER_AGENT,
+        }
 
         try:
             result = session_requests.post(
                 login_url,
                 data=payload,
-                headers=dict(referer=login_url)
+                headers=headers
             )
         except requests.exceptions.RequestException:
             logging.warning("Unable to connect to Tripwire")
@@ -51,13 +56,19 @@ class Tripwire:
         if self.session_requests:
             refresh_url = urlparse.urljoin(self.url, "refresh.php")
             payload = {
-                "mode": "init"
+                "mode": "init",
+                "systemID": "30000142"
+            }
+            headers = {
+                "Referer": refresh_url,
+                "User-Agent": Tripwire.USER_AGENT,
             }
 
             try:
                 result = self.session_requests.get(
                     refresh_url,
-                    params=payload
+                    params=payload,
+                    headers=headers
                 )
             except requests.exceptions.RequestException as e:
                 logging.error(e, exc_info=True)
@@ -69,10 +80,14 @@ class Tripwire:
         return response
 
     def augment_map(self, solar_map):
-        connections = 0
+        connections = -1  # not logged in, yet
         chain = self.get_chain()
 
         if chain:
+            # we get some sort of response so at least we're logged in
+            connections = 0
+
+            # let's see how many wormhole signatures exist (if any...)
             for sig in chain["chain"]["map"]:
                 if sig["type"] != "GATE":
                     connections += 1

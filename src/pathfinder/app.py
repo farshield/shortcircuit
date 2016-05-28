@@ -528,6 +528,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if connections > 0:
             self._trip_message("Retrieved {} connections!".format(connections), MainWindow.MSG_OK)
+        elif connections == 0:
+            self._trip_message("No wormhole connections exist!", MainWindow.MSG_ERROR)
         else:
             self._trip_message("Error. Check url/user/pass.", MainWindow.MSG_ERROR)
 
