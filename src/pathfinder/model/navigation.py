@@ -2,6 +2,7 @@
 
 from evedb import EveDb
 from solarmap import SolarMap
+from evescout import EveScout
 from tripwire import Tripwire
 
 
@@ -24,6 +25,10 @@ class Navigation:
         self.trip_url = trip_url
         self.trip_user = trip_user
         self.trip_pass = trip_pass
+
+    def evescout_augment(self, solar_map):
+        evescout = EveScout(self.eve_db)
+        evescout.augment_map(solar_map)
 
     def tripwire_augment(self, solar_map):
         trip = Tripwire(self.eve_db, self.trip_user, self.trip_pass, self.trip_url)
