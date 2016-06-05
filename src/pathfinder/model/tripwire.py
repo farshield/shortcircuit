@@ -12,7 +12,7 @@ class Tripwire:
     """
     Tripwire handler
     """
-    USER_AGENT = "Pathfinder v0.1.1"
+    USER_AGENT = "Pathfinder v0.1.1c"
 
     def __init__(self, eve_db, username, password, url):
         self.eve_db = eve_db

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_main.ui'
 #
-# Created: Sun Apr 24 12:11:24 2016
+# Created: Sun Jun 05 17:55:43 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -177,6 +177,10 @@ class Ui_MainWindow(object):
         self.label_trip_status.setAlignment(QtCore.Qt.AlignCenter)
         self.label_trip_status.setObjectName("label_trip_status")
         self.verticalLayout_3.addWidget(self.label_trip_status)
+        self.label_evescout_status = QtGui.QLabel(self.groupBox__options)
+        self.label_evescout_status.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_evescout_status.setObjectName("label_evescout_status")
+        self.verticalLayout_3.addWidget(self.label_evescout_status)
         self.groupBox_restrictions = QtGui.QGroupBox(self.groupBox__options)
         self.groupBox_restrictions.setObjectName("groupBox_restrictions")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox_restrictions)
@@ -334,6 +338,7 @@ class Ui_MainWindow(object):
         self.pushButton_trip_config.setText(QtGui.QApplication.translate("MainWindow", "Tripwire", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_crest_config.setText(QtGui.QApplication.translate("MainWindow", "CREST", None, QtGui.QApplication.UnicodeUTF8))
         self.label_trip_status.setText(QtGui.QApplication.translate("MainWindow", "Not connected to Tripwire, yet", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_evescout_status.setText(QtGui.QApplication.translate("MainWindow", "Eve-Scout", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_restrictions.setTitle(QtGui.QApplication.translate("MainWindow", "Restrictions", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Wormhole size at least:", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_size.setItemText(0, QtGui.QApplication.translate("MainWindow", "Small [All]", None, QtGui.QApplication.UnicodeUTF8))

@@ -2,5 +2,5 @@
 
 __organization__ = "FarshieldTech"
 __appname__ = "Pathfinder"
-__version__ = "0.1.1"
+__version__ = "0.1.1c"
 __author__ = "Valtyr Farshield"

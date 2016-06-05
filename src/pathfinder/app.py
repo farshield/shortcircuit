@@ -66,12 +66,13 @@ class TripwireDialog(QtGui.QDialog, Ui_TripwireDialog):
     """
     Tripwire Configuration Window
     """
-    def __init__(self, trip_url, trip_user, trip_pass, parent=None):
+    def __init__(self, trip_url, trip_user, trip_pass, evescout_enable, parent=None):
         super(TripwireDialog, self).__init__(parent)
         self.setupUi(self)
         self.lineEdit_url.setText(trip_url)
         self.lineEdit_user.setText(trip_user)
         self.lineEdit_pass.setText(trip_pass)
+        self.checkBox_evescout.setChecked(evescout_enable)
 
 
 class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
@@ -110,6 +111,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tripwire_url = None
         self.tripwire_user = None
         self.tripwire_pass = None
+        self.evescout_enable = None
         self.crest_implicit = None
         self.crest_client_id = None
         self.crest_client_secret = None
@@ -144,6 +146,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.additional_gui_setup()
         self.label_status_bar = QtGui.QLabel("Not connected to EvE")
         self.statusBar().addWidget(self.label_status_bar, 1)
+        if self.evescout_enable:
+            self.label_evescout_status.setText("Eve-Scout: enabled")
+        else:
+            self.label_evescout_status.setText("Eve-Scout: disabled")
 
         # Icons
         self.icon_wormhole = QtGui.QIcon(":images/app_icon_small.png")
@@ -233,6 +239,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tripwire_user = self.settings.value("tripwire_user", "username")
         self.tripwire_pass = self.settings.value("tripwire_pass", "password")
 
+        # Eve-Scout
+        self.evescout_enable = self.settings.value("evescout_enable", "false") == "true"
+
         # Avoidance list
         self.checkBox_avoid_enabled.setChecked(
             True if self.settings.value("avoidance_enabled", "false") == "true" else False
@@ -282,6 +291,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.settings.setValue("tripwire_url", self.tripwire_url)
         self.settings.setValue("tripwire_user", self.tripwire_user)
         self.settings.setValue("tripwire_pass", self.tripwire_pass)
+
+        # Eve-Scout
+        self.settings.setValue("evescout_enable", self.evescout_enable)
 
         # Avoidance list
         self.settings.setValue(
@@ -519,19 +531,35 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.pushButton_set_dest.setEnabled(True)
 
     @QtCore.Slot(int)
-    def thread_done(self, connections):
+    def thread_done(self, connections, evescout_connections):
         self.worker_thread.quit()
 
         # wait for thread to finish
         while self.worker_thread.isRunning():
             time.sleep(0.01)
 
-        if connections > 0:
-            self._trip_message("Retrieved {} connections!".format(connections), MainWindow.MSG_OK)
-        elif connections == 0:
-            self._trip_message("No wormhole connections exist!", MainWindow.MSG_ERROR)
+        if self.evescout_enable:
+            if evescout_connections >= 0:
+                self.label_evescout_status.setText("Eve-Scout: {} connections".format(evescout_connections))
+            else:
+                self.label_evescout_status.setText("Eve-Scout: error :(")
         else:
-            self._trip_message("Error. Check url/user/pass.", MainWindow.MSG_ERROR)
+            self.label_evescout_status.setText("Eve-Scout: disabled")
+        if connections > 0:
+            self._trip_message(
+                "Retrieved {} Tripwire connections!".format(connections),
+                MainWindow.MSG_OK
+            )
+        elif connections == 0:
+            self._trip_message(
+                "No Tripwire connections exist!",
+                MainWindow.MSG_ERROR
+            )
+        else:
+            self._trip_message(
+                "Tripwire error. Check url/user/pass.",
+                MainWindow.MSG_ERROR
+            )
 
         self.pushButton_trip_get.setEnabled(True)
         self.pushButton_find_path.setEnabled(True)
@@ -585,7 +613,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot()
     def btn_trip_config_clicked(self):
-        tripwire_dialog = TripwireDialog(self.tripwire_url, self.tripwire_user, self.tripwire_pass)
+        tripwire_dialog = TripwireDialog(
+            self.tripwire_url,
+            self.tripwire_user,
+            self.tripwire_pass,
+            self.evescout_enable
+        )
         if tripwire_dialog.exec_():
             self.tripwire_url = tripwire_dialog.lineEdit_url.text()
             self.tripwire_user = tripwire_dialog.lineEdit_user.text()
@@ -595,12 +628,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tripwire_user,
                 self.tripwire_pass
             )
+            self.evescout_enable = tripwire_dialog.checkBox_evescout.isChecked()
 
     @QtCore.Slot()
     def btn_trip_get_clicked(self):
         if not self.worker_thread.isRunning():
             self.pushButton_trip_get.setEnabled(False)
             self.pushButton_find_path.setEnabled(False)
+            self.nav_processor.evescout_enable = self.evescout_enable
             self.worker_thread.start()
         else:
             self._trip_message("Error! Process already running", MainWindow.MSG_ERROR)

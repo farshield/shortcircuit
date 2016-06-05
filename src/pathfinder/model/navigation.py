@@ -28,7 +28,7 @@ class Navigation:
 
     def evescout_augment(self, solar_map):
         evescout = EveScout(self.eve_db)
-        evescout.augment_map(solar_map)
+        return evescout.augment_map(solar_map)
 
     def tripwire_augment(self, solar_map):
         trip = Tripwire(self.eve_db, self.trip_user, self.trip_pass, self.trip_url)

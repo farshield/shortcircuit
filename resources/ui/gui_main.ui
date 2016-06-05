@@ -359,6 +359,16 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_evescout_status">
+           <property name="text">
+            <string>Eve-Scout</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="groupBox_restrictions">
            <property name="title">
             <string>Restrictions</string>
