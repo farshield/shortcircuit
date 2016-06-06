@@ -73,6 +73,12 @@ class TripwireDialog(QtGui.QDialog, Ui_TripwireDialog):
         self.lineEdit_user.setText(trip_user)
         self.lineEdit_pass.setText(trip_pass)
         self.checkBox_evescout.setChecked(evescout_enable)
+        self.label_evescout_logo.mouseDoubleClickEvent = TripwireDialog.logo_double_click
+
+    @staticmethod
+    def logo_double_click(event):
+        event.accept()
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.eve-scout.com/"))
 
 
 class AboutDialog(QtGui.QDialog, Ui_AboutDialog):

@@ -14,5 +14,6 @@
     <file>images/crest_banner.png</file>
     <file>images/config_icon.png</file>
     <file>images/delete_icon.png</file>
+    <file>images/evescout.png</file>
 </qresource>
 </RCC>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_about.ui'
 #
-# Created: Sun Jun 05 17:55:44 2016
+# Created: Mon Jun 06 11:51:10 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,7 +97,7 @@ class Ui_AboutDialog(object):
     def retranslateUi(self, AboutDialog):
         AboutDialog.setWindowTitle(QtGui.QApplication.translate("AboutDialog", "About Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
         self.label_title.setText(QtGui.QApplication.translate("AboutDialog", "Pathfinder", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Pathfinder is open-source application able to find the shortest path between solar systems (wormholes included) using the Eve SDE and wormhole mapping tools such as Tripwire. Pathfinder can run on all platforms where Python and PySide are supported.</p><p><span style=\" font-weight:600;\">Credits</span>: Daimian Mercer (Tripwire), Dreae (PyCrest), pyfa-org (PyFa)</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Pathfinder is open-source application able to find the shortest path between solar systems (wormholes included) using the Eve SDE and wormhole mapping tools such as Tripwire. Pathfinder can run on all platforms where Python and PySide are supported.</p><p><span style=\" font-weight:600;\">Credits</span>: Daimian Mercer (Tripwire), Dreae (PyCrest), pyfa-org (PyFa), EvE-Scout</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Creator:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_o7.setText(QtGui.QApplication.translate("AboutDialog", "Fly safe o7", None, QtGui.QApplication.UnicodeUTF8))
 
