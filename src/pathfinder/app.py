@@ -635,6 +635,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tripwire_pass
             )
             self.evescout_enable = tripwire_dialog.checkBox_evescout.isChecked()
+            if self.evescout_enable:
+                self.label_evescout_status.setText("Eve-Scout: enabled")
+            else:
+                self.label_evescout_status.setText("Eve-Scout: disabled")
 
     @QtCore.Slot()
     def btn_trip_get_clicked(self):
