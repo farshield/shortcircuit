@@ -1,6 +1,6 @@
 # solarmap.py
 
-import collections
+import heapq
 
 
 class SolarSystem:
@@ -33,7 +33,8 @@ class SolarMap:
     GATE = 0
     WORMHOLE = 1
 
-    def __init__(self):
+    def __init__(self, eve_db):
+        self.eve_db = eve_db
         self.systems_list = {}
         self.total_systems = 0
 
@@ -93,6 +94,7 @@ class SolarMap:
             destination,
             avoidance_list,
             size_restriction,
+            security_prio,
             ignore_eol,
             ignore_masscrit,
             age_threshold
@@ -104,17 +106,19 @@ class SolarMap:
             if source == destination:
                 path = [source]
             else:
-                queue = collections.deque()
+                priority_queue = []
                 visited = set([self.get_system(x) for x in avoidance_list])
+                distance = {}
                 parent = {}
 
                 # starting point
                 root = self.get_system(source)
-                queue.append(root)
-                visited.add(root)
+                distance[root] = 0
+                heapq.heappush(priority_queue, (distance[root], root))
 
-                while len(queue) > 0:
-                    current_sys = queue.popleft()
+                while len(priority_queue) > 0:
+                    (_, current_sys) = heapq.heappop(priority_queue)
+                    visited.add(current_sys)
 
                     if current_sys.get_id() == destination:
                         # Found!
@@ -135,23 +139,28 @@ class SolarMap:
                             [con_type, con_info] = current_sys.get_weight(neighbor)
                             if con_type == SolarMap.GATE:
                                 proceed = True
+                                risk = security_prio[self.eve_db.system_type(neighbor.get_id())]
                             elif con_type == SolarMap.WORMHOLE:
-                                [_, _, wh_size, wh_life, wh_mass, time_elapsed] = con_info
                                 proceed = True
+                                risk = security_prio[3]
+                                [_, _, wh_size, wh_life, wh_mass, time_elapsed] = con_info
                                 if wh_size not in size_restriction:
                                     proceed = False
-                                if ignore_eol and wh_life == 0:
+                                elif ignore_eol and wh_life == 0:
                                     proceed = False
-                                if ignore_masscrit and wh_mass == 0:
+                                elif ignore_masscrit and wh_mass == 0:
                                     proceed = False
-                                if 0 < age_threshold < time_elapsed:
+                                elif 0 < age_threshold < time_elapsed:
                                     proceed = False
                             else:
                                 proceed = False
 
                             if proceed:
-                                parent[neighbor] = current_sys
-                                visited.add(neighbor)
-                                queue.append(neighbor)
+                                if neighbor not in distance:
+                                    distance[neighbor] = float('inf')
+                                if distance[neighbor] > distance[current_sys] + risk:
+                                    distance[neighbor] = distance[current_sys] + risk
+                                    heapq.heappush(priority_queue, (distance[neighbor], neighbor))
+                                    parent[neighbor] = current_sys
 
         return path

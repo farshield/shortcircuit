@@ -49,13 +49,33 @@ class EveDb:
             sys_class = db_class
         return sys_class
 
+    def system_type(self, system_id):
+        """
+        0 - highsec
+        1 - lowsec
+        2 - nullsec or unknown
+        3 - wspace
+        :param system_id:
+        :return: Possbile values: 0-3
+        """
+        db_class = self.system_desc[system_id][1]
+        if db_class == "HS":
+            system_type_id = 0
+        elif db_class == "LS":
+            system_type_id = 1
+        elif db_class == "NS" or db_class == "WH":
+            system_type_id = 2
+        else:
+            system_type_id = 3
+        return system_type_id
+
     def get_whsize_by_system(self, source_id, dest_id):
         source_class = self._get_class(source_id)
         dest_class = self._get_class(dest_id)
         return EveDb.SIZE_MATRIX[source_class][dest_class]
 
     def get_solar_map(self):
-        solar_map = SolarMap()
+        solar_map = SolarMap(self)
         for row in self.gates:
             solar_map.add_connection(row[0], row[1], SolarMap.GATE)
 

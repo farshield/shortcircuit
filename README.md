@@ -39,6 +39,9 @@ If you enable Eve-Scout option then wormhole connections to/from Thera updated b
 
 This is only useful if you or your corp/alliance have their own Tripwire server.
 
+## Security prioritization
+TODO
+
 ## Screenshot
 ![Screenshot](http://i.imgur.com/qlLLDFn.png)
 

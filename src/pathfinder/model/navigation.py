@@ -93,7 +93,17 @@ class Navigation:
 
         return info
 
-    def route(self, source, destination, avoidance_list, size_restriction, ignore_eol, ignore_masscrit, age_threshold):
+    def route(
+            self,
+            source,
+            destination,
+            avoidance_list,
+            size_restriction,
+            security_prio,
+            ignore_eol,
+            ignore_masscrit,
+            age_threshold
+    ):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
         path = self.solar_map.shortest_path(
@@ -101,6 +111,7 @@ class Navigation:
             dest_id,
             [self.eve_db.name2id(x) for x in avoidance_list],
             size_restriction,
+            security_prio,
             ignore_eol,
             ignore_masscrit,
             age_threshold

@@ -273,6 +273,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             float(self.settings.value("restriction_hours", "16.0"))
         )
 
+        # Security prioritization
+        self.spinBox_prio_hs.setValue(int(self.settings.value("prio_hs", "1")))
+        self.spinBox_prio_ls.setValue(int(self.settings.value("prio_ls", "1")))
+        self.spinBox_prio_ns.setValue(int(self.settings.value("prio_ns", "1")))
+        self.spinBox_prio_wh.setValue(int(self.settings.value("prio_wh", "1")))
+
         self.settings.endGroup()
 
     def write_settings(self):
@@ -333,6 +339,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             "restriction_hours",
             self.doubleSpinBox_hours.value()
         )
+
+        # Security prioritization
+        self.settings.setValue("prio_hs", self.spinBox_prio_hs.value())
+        self.settings.setValue("prio_ls", self.spinBox_prio_ls.value())
+        self.settings.setValue("prio_ns", self.spinBox_prio_ns.value())
+        self.settings.setValue("prio_wh", self.spinBox_prio_wh.value())
 
         self.settings.endGroup()
 
@@ -454,6 +466,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
         [size_restriction, ignore_eol, ignore_masscrit, age_threshold] = self.get_restrictions()
+        security_prio = [
+            self.spinBox_prio_hs.value(),
+            self.spinBox_prio_ls.value(),
+            self.spinBox_prio_ns.value(),
+            self.spinBox_prio_wh.value(),
+        ]
         if source_sys_name and dest_sys_name:
             if self.avoidance_enabled():
                 [route, short_format] = self.nav.route(
@@ -461,6 +479,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     dest_sys_name,
                     self.avoidance_list(),
                     size_restriction,
+                    security_prio,
                     ignore_eol,
                     ignore_masscrit,
                     age_threshold
@@ -471,6 +490,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     dest_sys_name,
                     [],
                     size_restriction,
+                    security_prio,
                     ignore_eol,
                     ignore_masscrit,
                     age_threshold
