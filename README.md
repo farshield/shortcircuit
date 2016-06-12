@@ -40,7 +40,20 @@ If you enable Eve-Scout option then wormhole connections to/from Thera updated b
 This is only useful if you or your corp/alliance have their own Tripwire server.
 
 ## Security prioritization
-TODO
+Security prioritization mechanism is defined by four values which represent a weight, or an effort:
+
+* HS - the amount of effort it takes to jump a gate to high-sec
+* LS - the amount of effort it takes to jump a gate to low-sec
+* NS - the amount of effort it takes to jump a gate to null-sec
+* WH - the amount of effort it takes to jump a wormhole to any system
+
+Values may range from 1 to 100 and if all values are equal (ex. all equal to 1), then this function is practically disabled.
+
+![SecPrio](http://i.imgur.com/wUaSe3e.png)
+
+In the above scenario the user specified that the effort is the same for taking gates to high-sec or low-sec and there's no need to prioritize one above the other. Compared to this, it's ten times more difficult to take gates to null-sec and three times more difficult to take any wormholes compared to high-sec/low-sec gates.
+
+For example, this may be useful when trying to avoid null-sec systems if possible, unless it shortens the path considerably, and when wormholes aren't bookmarked.
 
 ## Screenshot
 ![Screenshot](http://i.imgur.com/qlLLDFn.png)
