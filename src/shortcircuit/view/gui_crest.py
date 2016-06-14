@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_crest.ui'
 #
-# Created: Sat Jun 11 18:05:27 2016
+# Created: Tue Jun 14 17:12:37 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -95,7 +95,7 @@ class Ui_CrestDialog(object):
         self.radioButton_implicit.setText(QtGui.QApplication.translate("CrestDialog", "Implicit", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButton_user.setText(QtGui.QApplication.translate("CrestDialog", "User-supplied details", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("CrestDialog", "<html><head/><body><p><a href=\"https://developers.eveonline.com/applications/\"><span style=\" text-decoration: underline; color:#0000ff;\">Get credentials</span></a></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("CrestDialog", "<html><head/><body><p><a href=\"https://github.com/farshield/pathfinder/blob/master/README.md#about-crest\"><span style=\" text-decoration: underline; color:#0000ff;\">Need more help?</span></a></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("CrestDialog", "<html><head/><body><p><a href=\"https://github.com/farshield/shortcircuit/blob/master/README.md#about-crest\"><span style=\" text-decoration: underline; color:#0000ff;\">Need more help?</span></a></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("CrestDialog", "Client ID:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("CrestDialog", "Client Secret:", None, QtGui.QApplication.UnicodeUTF8))
 

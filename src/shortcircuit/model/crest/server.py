@@ -13,7 +13,7 @@ HTML = '''
 
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-    <title>Pathfinder Local Server</title>
+    <title>Short Circuit Local Server</title>
     <style type="text/css">
         body { text-align: center; padding: 150px; }
         h1 { font-size: 40px; }
@@ -27,7 +27,7 @@ HTML = '''
 <body>
 
 <div id="article">
-    <h1>Pathfinder</h1>
+    <h1>Short Circuit</h1>
     <div>
         <p>If you see this message then it means you should be logged in with CREST. You may close this window and return to the application.</p>
     </div>

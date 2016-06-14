@@ -88,10 +88,16 @@ class AboutDialog(QtGui.QDialog, Ui_AboutDialog):
     def __init__(self, author, version, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
-        self.label_title.setText("Pathfinder {}".format(version))
+        self.label_title.setText("Short Circuit {}".format(version))
         self.label_author.setText("Creator: {}".format(author))
         # noinspection PyUnresolvedReferences
         self.pushButton_o7.clicked.connect(self.close)
+        self.label_icon.mouseDoubleClickEvent = AboutDialog.icon_double_click
+
+    @staticmethod
+    def icon_double_click(event):
+        event.accept()
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/farshield/shortcircuit"))
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -187,7 +193,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setWindowTitle(__appname__)
         self.scene_banner = QtGui.QGraphicsScene()
         self.graphicsView_banner.setScene(self.scene_banner)
-        self.scene_banner.addPixmap(QtGui.QPixmap(":images/wds_logo.png"))
+        self.scene_banner.addPixmap(QtGui.QPixmap(":images/banner.png"))
         self._path_message("", MainWindow.MSG_OK)
         self._avoid_message("", MainWindow.MSG_OK)
         self.lineEdit_source.setFocus()

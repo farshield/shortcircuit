@@ -1,7 +1,7 @@
-# Pathfinder
+# Short Circuit
 
 ## Description
-Pathfinder is a desktop application which is able to find the shortest path between solar systems (including wormholes) using data retrieved from Eve SDE and 3rd party wormhole mapping tools. The application is able to run on all systems where Python and PySide vesion 1.2.4 are supported.
+Short Circuit (previously known as Pathfinder) is a desktop application which is able to find the shortest path between solar systems (including wormholes) using data retrieved from Eve SDE and 3rd party wormhole mapping tools. The application is able to run on all systems where Python and PySide vesion 1.2.4 are supported.
 
 **Features:**
 
@@ -25,12 +25,12 @@ $ sudo apt-get install python-pyside
 ```
 
 ## Releases
-Binaries (executables) can be downloaded from [here](https://github.com/farshield/pathfinder/releases)
+Binaries (executables) can be downloaded from [here](https://github.com/farshield/shortcircuit/releases)
 
 ## About CREST
 Using CREST is optional, but it provides features like getting current player location or setting in-game destination automatically.
 
-Pathfinder uses almost the same CREST model as PyFa. You can find more about it [here](https://github.com/pyfa-org/Pyfa/wiki/CREST). Implicit mode only allows for a 20 minutes session, after that you have to relog. If you don't want to use the "implicit" mode, you can create your own keys at this [location](https://developers.eveonline.com/applications). This will permit you to stay logged in for a longer period of time. Application form should look something like [this](http://i.imgur.com/qhIPG6r.png). Of course you can give it a different name and description, but you have to type in the correct callback URL `http://127.0.0.1:7444` and select the correct scopes (`characterLocationRead` and `characterNavigationWrite`).
+Short Circuit uses almost the same CREST model as PyFa. You can find more about it [here](https://github.com/pyfa-org/Pyfa/wiki/CREST). Implicit mode only allows for a 20 minutes session, after that you have to relog. If you don't want to use the "implicit" mode, you can create your own keys at this [location](https://developers.eveonline.com/applications). This will permit you to stay logged in for a longer period of time. Application form should look something like [this](http://i.imgur.com/qhIPG6r.png). Of course you can give it a different name and description, but you have to type in the correct callback URL `http://127.0.0.1:7444` and select the correct scopes (`characterLocationRead` and `characterNavigationWrite`).
 
 ## Eve-Scout
 ![TripwireConfig](http://i.imgur.com/GiJ2zc3.png)
@@ -59,10 +59,10 @@ For example, this may be useful when trying to avoid null-sec systems if possibl
 ![Screenshot](http://i.imgur.com/qlLLDFn.png)
 
 ## Video
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Pathfinder video" width="480" height="360" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Short Circuit video" width="480" height="360" border="10" /></a>
 
 ## How it works
-Pathfinder reconstructs its own version of the Eve solar map from the 'mapSolarSystemJumps' table of the Static Data Export database. After that, the solar map can be extended by retrieving connections from popular 3rd party wormhole mapping tools. The JSON response from [Tripwire](https://tripwire.eve-apps.com/) is processed and the connections are added to the existing solar map. Graph algorithms will compute the shortest path taking certain things into account like avoidance list and wormhole size restrictions.
+Short Circuit reconstructs its own version of the Eve solar map from the 'mapSolarSystemJumps' table of the Static Data Export database. After that, the solar map can be extended by retrieving connections from popular 3rd party wormhole mapping tools. The JSON response from [Tripwire](https://tripwire.eve-apps.com/) is processed and the connections are added to the existing solar map. Graph algorithms will compute the shortest path taking certain things into account like avoidance list and wormhole size restrictions.
 
 Sample JSON response from Tripwire (converted to YAML for easy reading). This type of response is processed and added to the application's own solar system representation:
 ```yaml
@@ -84,10 +84,9 @@ mass: "Stable"
 ```
 
 ## Future development
-1. Improve the searching algorithm and offer the possibility to prioritize certain security values (ex. avoid low-sec/null-sec if possible)
-2. Add support for more 3rd party wormhole mapping tools
-3. Combine data from multiple sources (multiple Tripwire accounts, etc.)
-4. Suggestions?
+1. Add support for more 3rd party wormhole mapping tools
+2. Combine data from multiple sources (multiple Tripwire accounts, etc.)
+3. Suggestions?
 
 ## Contacts
 For any questions please contact Valtyr Farshield. Contract me some Quafe. Thank you :)

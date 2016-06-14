@@ -3,7 +3,7 @@
 
 def main():
     import sys
-    from pathfinder import app
+    from shortcircuit import app
 
     sys.exit(app.run())
 
