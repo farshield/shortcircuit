@@ -164,7 +164,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.label_evescout_status.setText("Eve-Scout: disabled")
 
         # Icons
-        self.icon_wormhole = QtGui.QIcon(":images/app_icon_small.png")
+        self.icon_wormhole = QtGui.QIcon(":images/wh_icon.png")
 
         # Thread initial config
         self.worker_thread = QtCore.QThread()

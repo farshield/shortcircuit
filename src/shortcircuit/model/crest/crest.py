@@ -134,7 +134,7 @@ class Crest:
         success = False
         if self.con:
             solar_system = 'https://crest-tq.eveonline.com/solarsystems/{}/'.format(sys_id)
-            uri = '{}characters/{}/navigation/waypoints/'.format(self.eve._authed_endpoint, self.char_id)
+            uri = '{}characters/{}/ui/autopilot/waypoints/'.format(self.eve._authed_endpoint, self.char_id)
             post_data = json.dumps(
                 {
                     'solarSystem': {'href': solar_system, 'id': sys_id},

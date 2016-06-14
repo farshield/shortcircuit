@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'resources\ui\gui_about.ui'
 #
-# Created: Tue Jun 14 17:12:37 2016
+# Created: Tue Jun 14 19:59:11 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,7 +97,7 @@ class Ui_AboutDialog(object):
     def retranslateUi(self, AboutDialog):
         AboutDialog.setWindowTitle(QtGui.QApplication.translate("AboutDialog", "About Short Circuit", None, QtGui.QApplication.UnicodeUTF8))
         self.label_title.setText(QtGui.QApplication.translate("AboutDialog", "Short Circuit", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Short Circuit is an open-source application able to find the shortest path between solar systems (wormholes included) using the Eve SDE and wormhole mapping tools such as Tripwire. Short Circuit can run on all platforms where Python and PySide are supported.</p><p><span style=\" font-weight:600;\">Credits</span>: Daimian Mercer (Tripwire), Dreae (PyCrest), pyfa-org (PyFa), EvE-Scout, choo t</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("AboutDialog", "<html><head/><body><p align=\"justify\">Short Circuit is an open-source application able to find the shortest path between solar systems (wormholes included) using the Eve SDE and wormhole mapping tools such as Tripwire. Short Circuit can run on all platforms where Python and PySide are supported.</p><p><span style=\" font-weight:600;\">Credits</span>: Daimian Mercer (Tripwire), Dreae (PyCrest), pyfa-org (PyFa), EvE-Scout, Sharps, choo t</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_author.setText(QtGui.QApplication.translate("AboutDialog", "Creator:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_o7.setText(QtGui.QApplication.translate("AboutDialog", "Fly safe o7", None, QtGui.QApplication.UnicodeUTF8))
 

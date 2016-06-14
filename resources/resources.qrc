@@ -15,5 +15,6 @@
     <file>images/config_icon.png</file>
     <file>images/delete_icon.png</file>
     <file>images/evescout.png</file>
+    <file>images/wh_icon.png</file>
 </qresource>
 </RCC>
