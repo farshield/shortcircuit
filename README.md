@@ -56,7 +56,7 @@ In the above scenario the user specified that the effort is the same for taking 
 For example, this may be useful when trying to avoid null-sec systems if possible, unless it shortens the path considerably, and when wormholes aren't bookmarked.
 
 ## Screenshot
-![Screenshot](http://i.imgur.com/qlLLDFn.png)
+![Screenshot](http://i.imgur.com/6GuT6YY.png)
 
 ## Video
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=oM3mSKzZM0w" target="_blank"><img src="http://img.youtube.com/vi/oM3mSKzZM0w/0.jpg" alt="Short Circuit video" width="480" height="360" border="10" /></a>
@@ -82,6 +82,14 @@ life: "Stable"
 mass: "Stable"
 ...
 ```
+
+## EvE Online CREST API Challenge
+
+*Pathfinder* (now renamed to *Short Circuit*) won the EvE Online CREST API Challenge 2016!
+
+<https://community.eveonline.com/news/dev-blogs/winners-of-the-eve-online-api-challenge/>
+
+<a href="https://www.youtube.com/watch?v=qw0OhRGeDgA&t=7m0s" target="_blank"><img src="http://img.youtube.com/vi/qw0OhRGeDgA/1.jpg" alt="Pathfinder on the o7 Show" width="480" height="360" border="10" /></a>
 
 ## Future development
 1. Add support for more 3rd party wormhole mapping tools
