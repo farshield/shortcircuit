@@ -14,6 +14,7 @@ from model.navigation import Navigation
 from model.navprocessor import NavProcessor
 from model.evedb import EveDb
 from model.crestprocessor import CrestProcessor
+from model.versioncheck import VersionCheck
 
 
 def dict_from_csvqfile(file_path):
@@ -174,6 +175,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # noinspection PyUnresolvedReferences
         self.worker_thread.started.connect(self.nav_processor.process)
 
+        # Version check thread
+        self.version_thread = QtCore.QThread()
+        self.version_check = VersionCheck()
+        self.version_check.moveToThread(self.version_thread)
+        self.version_check.finished.connect(self.version_check_done)
+        # noinspection PyUnresolvedReferences
+        self.version_thread.started.connect(self.version_check.process)
+
         # CREST
         self.eve_connected = False
         self.crestp = CrestProcessor(
@@ -185,6 +194,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.crestp.logout_response.connect(self.logout_handler)
         self.crestp.location_response.connect(self.location_handler)
         self.crestp.destination_response.connect(self.destination_handler)
+
+        # Start version check
+        self.version_thread.start()
 
     # noinspection PyUnresolvedReferences
     def additional_gui_setup(self):
@@ -749,6 +761,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self._table_style(180, 196, 212)
 
             self.lineEdit_set_dest.setText(selection[0].text())
+
+    @QtCore.Slot(str)
+    def version_check_done(self, version):
+        self.version_thread.quit()
+
+        if version and __version__ != version:
+            version_box = QtGui.QMessageBox(self)
+            version_box.setWindowTitle("New version available!")
+            version_box.setText(
+                "You have version '{}', but there's a new version available: '{}'.".format(__version__, version)
+            )
+            version_box.addButton("Download now", QtGui.QMessageBox.AcceptRole)
+            version_box.addButton("Remind me later", QtGui.QMessageBox.RejectRole)
+            ret = version_box.exec_()
+
+            if ret == QtGui.QMessageBox.AcceptRole:
+                QtGui.QDesktopServices.openUrl(
+                    QtCore.QUrl("https://github.com/farshield/shortcircuit/releases/tag/{}".format(version))
+                )
 
     # event: QCloseEvent
     def closeEvent(self, event):

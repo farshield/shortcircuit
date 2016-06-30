@@ -2,5 +2,5 @@
 
 __organization__ = "FarshieldTech"
 __appname__ = "Short Circuit"
-__version__ = "0.1.2"
+__version__ = "v.0.1.3-beta"
 __author__ = "Valtyr Farshield"
