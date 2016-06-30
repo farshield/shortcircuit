@@ -106,16 +106,27 @@ class Navigation:
     ):
         source_id = self.eve_db.name2id(source)
         dest_id = self.eve_db.name2id(destination)
-        path = self.solar_map.shortest_path(
-            source_id,
-            dest_id,
-            [self.eve_db.name2id(x) for x in avoidance_list],
-            size_restriction,
-            security_prio,
-            ignore_eol,
-            ignore_masscrit,
-            age_threshold
-        )
+        if security_prio:
+            path = self.solar_map.shortest_path_weighted(
+                source_id,
+                dest_id,
+                [self.eve_db.name2id(x) for x in avoidance_list],
+                size_restriction,
+                security_prio,
+                ignore_eol,
+                ignore_masscrit,
+                age_threshold
+            )
+        else:
+            path = self.solar_map.shortest_path(
+                source_id,
+                dest_id,
+                [self.eve_db.name2id(x) for x in avoidance_list],
+                size_restriction,
+                ignore_eol,
+                ignore_masscrit,
+                age_threshold
+            )
 
         route = []
         short_format = ""

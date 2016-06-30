@@ -487,7 +487,7 @@
             <string>Security prioritization</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="1">
+            <item row="1" column="1">
              <widget class="QSpinBox" name="spinBox_prio_hs">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -495,21 +495,8 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>100</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="spinBox_prio_ns">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+              <property name="styleSheet">
+               <string notr="true">QSpinBox { background-color: #DFF0D8; }</string>
               </property>
               <property name="minimum">
                <number>1</number>
@@ -519,7 +506,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_6">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -532,7 +519,26 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="4">
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="spinBox_prio_ns">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QSpinBox { background-color: #F2DEDE; }</string>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="4">
              <widget class="QLabel" name="label_10">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -548,7 +554,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_7">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -561,7 +567,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
+            <item row="1" column="2">
              <widget class="QLabel" name="label_8">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -574,13 +580,16 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="3">
-             <widget class="QSpinBox" name="spinBox_prio_ls">
+            <item row="2" column="3">
+             <widget class="QSpinBox" name="spinBox_prio_wh">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QSpinBox { background-color: #D2E2F2; }</string>
               </property>
               <property name="minimum">
                <number>1</number>
@@ -588,9 +597,12 @@
               <property name="maximum">
                <number>100</number>
               </property>
+              <property name="value">
+               <number>1</number>
+              </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="2" column="2">
              <widget class="QLabel" name="label_9">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -604,12 +616,15 @@
              </widget>
             </item>
             <item row="1" column="3">
-             <widget class="QSpinBox" name="spinBox_prio_wh">
+             <widget class="QSpinBox" name="spinBox_prio_ls">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QSpinBox { background-color: #FCF8E3; }</string>
               </property>
               <property name="minimum">
                <number>1</number>
@@ -617,8 +632,12 @@
               <property name="maximum">
                <number>100</number>
               </property>
-              <property name="value">
-               <number>1</number>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="5">
+             <widget class="QCheckBox" name="checkBox_security_enabled">
+              <property name="text">
+               <string>Enabled</string>
               </property>
              </widget>
             </item>

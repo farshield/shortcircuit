@@ -280,6 +280,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         # Security prioritization
+        self.checkBox_security_enabled.setChecked(
+            True if self.settings.value("security_enabled", "false") == "true" else False
+        )
         self.spinBox_prio_hs.setValue(int(self.settings.value("prio_hs", "1")))
         self.spinBox_prio_ls.setValue(int(self.settings.value("prio_ls", "1")))
         self.spinBox_prio_ns.setValue(int(self.settings.value("prio_ns", "1")))
@@ -347,6 +350,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         # Security prioritization
+        self.settings.setValue(
+            "security_enabled",
+            self.checkBox_security_enabled.isChecked()
+        )
         self.settings.setValue("prio_hs", self.spinBox_prio_hs.value())
         self.settings.setValue("prio_ls", self.spinBox_prio_ls.value())
         self.settings.setValue("prio_ns", self.spinBox_prio_ns.value())
@@ -472,12 +479,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 return
 
         [size_restriction, ignore_eol, ignore_masscrit, age_threshold] = self.get_restrictions()
-        security_prio = [
-            self.spinBox_prio_hs.value(),
-            self.spinBox_prio_ls.value(),
-            self.spinBox_prio_ns.value(),
-            self.spinBox_prio_wh.value(),
-        ]
+        if self.checkBox_security_enabled.isChecked():
+            security_prio = [
+                self.spinBox_prio_hs.value(),
+                self.spinBox_prio_ls.value(),
+                self.spinBox_prio_ns.value(),
+                self.spinBox_prio_wh.value(),
+            ]
+        else:
+            security_prio = []
+
         if source_sys_name and dest_sys_name:
             if self.avoidance_enabled():
                 [route, short_format] = self.nav.route(
