@@ -41,7 +41,7 @@ class EveDb:
 
     def _get_class(self, system_id):
         db_class = self.system_desc[system_id][1]
-        if db_class in ["HS", "LS", "NS"]:
+        if db_class in ["HS", "LS", "NS", "Unknown"]:
             sys_class = "kspace"
         elif db_class in ["C14", "C15", "C16", "C17", "C18"]:
             sys_class = "drifter"
