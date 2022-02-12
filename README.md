@@ -1,5 +1,9 @@
 # Short Circuit
 
+## IMPORTANT
+
+This repository is not maintained anymore. Please visit https://github.com/secondfry/shortcircuit for a more up to date version.
+
 ## Description
 Short Circuit (previously known as Pathfinder) is a desktop application which is able to find the shortest path between solar systems (including wormholes) using data retrieved from Eve SDE and 3rd party wormhole mapping tools. The application is able to run on all systems where Python and PySide vesion 1.2.4 are supported.
 
